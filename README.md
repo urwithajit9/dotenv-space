@@ -1,2 +1,3 @@
-# dotenv-space
+# dotenv.space
 The complete .env reference for Python, Django, React, Next.js, Rust, Docker and GitHub Actions.
+Live at: https://dotenv.space
