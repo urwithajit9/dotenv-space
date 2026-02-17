@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dotenv.guide — The Complete .env Reference for Every Stack</title>
+<meta name="description" content="The only resource you need for .env files — Python, Django, FastAPI, React, Next.js, Rust, Docker, GitHub Actions. Real examples, troubleshooting, and best practices.">
+
+<!-- Open Graph / Facebook / LinkedIn -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://dotenv.guide/">
+<meta property="og:title"       content="dotenv.guide — The Complete .env Reference for Every Stack">
+<meta property="og:description" content="The only resource you need for .env files — Python, Django, FastAPI, React, Next.js, Rust, Docker &amp; GitHub Actions. No more hunting through 12 different docs.">
+<meta property="og:image"       content="https://dotenv.guide/og-image.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name"   content="dotenv.guide">
+
+<!-- Twitter Card -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:url"         content="https://dotenv.guide/">
+<meta name="twitter:title"       content="dotenv.guide — The Complete .env Reference for Every Stack">
+<meta name="twitter:description" content="Everything about .env files in one place — Python, Django, React, Next.js, Rust, Docker, GitHub Actions. Real examples &amp; troubleshooting.">
+<meta name="twitter:image"       content="https://dotenv.guide/og-image.png">
+
+<!-- Canonical -->
+<link rel="canonical" href="https://dotenv.guide/">
+
+<!-- Favicon inline SVG -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #060811;
+  --bg2: #0b0f1a;
+  --surface: #0f1422;
+  --surface2: #151929;
+  --border: #1e253a;
+  --accent: #00e5ff;
+  --accent2: #7c3aed;
+  --accent3: #10b981;
+  --danger: #f43f5e;
+  --warn: #f59e0b;
+  --text: #e8edf7;
+  --muted: #8892a4;
+  --dim: #5a647a;
+  --radius: 10px;
+  --glow: 0 0 30px rgba(0,229,255,.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(6,8,17,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -.02em;
+}
+
+.nav-logo span { color: var(--muted); }
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: color .2s;
+  letter-spacing: .01em;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+.nav-cta {
+  background: var(--accent);
+  color: #000 !important;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: opacity .2s !important;
+}
+
+.nav-cta:hover { opacity: .85; color: #000 !important; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  nav { padding: 0 20px; }
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 100px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(0,229,255,.07) 0%, transparent 65%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,229,255,.08);
+  border: 1px solid rgba(0,229,255,.2);
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.04em;
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.hero h1 .mono {
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--accent);
+  display: block;
+  font-size: .65em;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  margin-bottom: 8px;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--muted);
+  max-width: 560px;
+  margin: 0 auto 48px;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 72px;
+  position: relative;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity .2s, transform .2s;
+  font-family: 'Syne', sans-serif;
+}
+
+.btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 13px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: border-color .2s, transform .2s;
+}
+
+.btn-secondary:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+/* Stack badges */
+.stack-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+}
+
+.stack-badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  transition: border-color .2s, color .2s;
+}
+
+.stack-badge:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── MAIN ── */
+main { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+/* ── SECTIONS ── */
+.section { padding: 88px 0; border-top: 1px solid var(--border); }
+
+.section-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 44px 0 14px;
+  color: var(--text);
+}
+
+p {
+  color: var(--muted);
+  margin-bottom: 18px;
+  line-height: 1.8;
+}
+
+p strong { color: var(--text); font-weight: 500; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── CODE ── */
+.code-wrap { margin: 24px 0; }
+
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 9px 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.lang-tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.lang-env  { background: rgba(16,185,129,.12); color: #34d399; border: 1px solid rgba(16,185,129,.25); }
+.lang-py   { background: rgba(59,130,246,.12);  color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+.lang-ts   { background: rgba(56,189,248,.12);  color: #7dd3fc; border: 1px solid rgba(56,189,248,.25); }
+.lang-rs   { background: rgba(249,115,22,.12);  color: #fb923c; border: 1px solid rgba(249,115,22,.25); }
+.lang-yml  { background: rgba(168,85,247,.12);  color: #c084fc; border: 1px solid rgba(168,85,247,.25); }
+.lang-sh   { background: rgba(245,158,11,.12);  color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
+.lang-dk   { background: rgba(14,165,233,.12);  color: #38bdf8; border: 1px solid rgba(14,165,233,.25); }
+
+pre {
+  background: #070b12;
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 22px 24px;
+  overflow-x: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+
+.ic { /* inline code */
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: .82em;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--accent3);
+}
+
+/* syntax */
+.ck { color: #79c0ff; } /* key */
+.cv { color: #a5f3fc; } /* value */
+.cc { color: #4a5568; } /* comment */
+.cs { color: #86efac; } /* string */
+.cw { color: #f87171; } /* keyword */
+.cf { color: #c4b5fd; } /* function */
+.cn { color: #fde68a; } /* number */
+
+/* ── CALLOUTS ── */
+.callout {
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 24px 0;
+  display: flex;
+  gap: 14px;
+  font-size: 14.5px;
+}
+
+.callout p { margin: 0; font-size: 14.5px; }
+.ci-icon { font-size: 18px; flex-shrink: 0; }
+
+.danger { background: rgba(244,63,94,.07); border: 1px solid rgba(244,63,94,.2); }
+.warn   { background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.2); }
+.info   { background: rgba(0,229,255,.06);  border: 1px solid rgba(0,229,255,.15); }
+.tip    { background: rgba(16,185,129,.06); border: 1px solid rgba(16,185,129,.15); }
+
+/* ── TABLE ── */
+.table-scroll { overflow-x: auto; margin: 24px 0; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: var(--surface2);
+  color: var(--dim);
+  font-weight: 500;
+  text-align: left;
+  padding: 11px 16px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+td {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+tr:nth-child(even) td { background: rgba(255,255,255,.015); }
+td strong { color: var(--text); }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+@media (max-width: 640px) { .g2 { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.card h4 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+.card p { font-size: 13.5px; margin: 0; }
+
+/* ── TROUBLESHOOT ── */
+details {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin: 12px 0;
+}
+
+summary {
+  padding: 18px 22px;
+  cursor: pointer;
+  font-weight: 500;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+summary::before {
+  content: '▶';
+  font-size: 10px;
+  color: var(--accent);
+  transition: transform .2s;
+  flex-shrink: 0;
+}
+
+details[open] summary::before { transform: rotate(90deg); }
+details[open] { border-color: rgba(0,229,255,.25); }
+
+.detail-body { padding: 0 22px 22px; }
+.detail-body p { font-size: 14.5px; }
+
+.t-tag {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.tt-bug    { background: rgba(244,63,94,.12); color: #f87171; border: 1px solid rgba(244,63,94,.2); }
+.tt-ci     { background: rgba(168,85,247,.12); color: #c084fc; border: 1px solid rgba(168,85,247,.2); }
+.tt-docker { background: rgba(14,165,233,.12); color: #38bdf8; border: 1px solid rgba(14,165,233,.2); }
+.tt-team   { background: rgba(245,158,11,.12); color: #fbbf24; border: 1px solid rgba(245,158,11,.2); }
+.tt-rust   { background: rgba(249,115,22,.12); color: #fb923c; border: 1px solid rgba(249,115,22,.2); }
+
+/* ── JOURNEY BLOCK (story) ── */
+.story-box {
+  position: relative;
+  background: linear-gradient(135deg, rgba(244,63,94,.05) 0%, rgba(124,58,237,.05) 100%);
+  border: 1px solid rgba(244,63,94,.2);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin: 32px 0;
+}
+
+.story-box .quote-mark {
+  position: absolute;
+  top: 12px; right: 20px;
+  font-size: 60px;
+  color: var(--danger);
+  opacity: .15;
+  font-family: 'Syne', sans-serif;
+  line-height: 1;
+}
+
+/* ── FLOW STEPS ── */
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 28px 0;
+  overflow-x: auto;
+}
+
+.fstep {
+  flex: 1;
+  min-width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 14px;
+  text-align: center;
+  font-size: 12.5px;
+  position: relative;
+}
+
+.fstep:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: var(--accent);
+  font-size: 18px;
+}
+
+.fstep:not(:first-child) { margin-left: 14px; }
+.fstep .fi { font-size: 22px; margin-bottom: 7px; }
+.fstep span { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+
+/* ── CHECKLIST ── */
+.checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 28px 0;
+}
+@media (max-width: 640px) { .checklist { grid-template-columns: 1fr; } }
+
+.cl-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.cl-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  margin-bottom: 12px;
+}
+
+.cl-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cl-card li {
+  color: var(--muted);
+  font-size: 13.5px;
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.cl-card li::before {
+  content: '◻';
+  color: var(--accent);
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.footer-logo span { color: var(--dim); }
+
+footer p {
+  color: var(--dim);
+  font-size: 13.5px;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.footer-links a {
+  color: var(--dim);
+  font-size: 13px;
+  transition: color .2s;
+}
+
+.footer-links a:hover { color: var(--accent); text-decoration: none; }
+
+/* ── SECTION DIVIDER ── */
+.chip {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.hr-subtle { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+
+/* ── COPY BUTTON ── */
+.copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all .18s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,.06); }
+.copy-btn.copied { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,.08); }
+
+/* ── MOBILE NAV ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--muted); border-radius: 2px; transition: all .2s; }
+
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 60px; left: 0; right: 0;
+    background: rgba(6,8,17,.97);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    padding: 16px 24px 20px;
+    gap: 4px;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 10px 0; font-size: 15px; border-bottom: 1px solid var(--border); }
+  .nav-links li:last-child a { border-bottom: none; }
+  .nav-cta { border-bottom: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#"><span>$</span> dotenv<span>.guide</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#start">Start Here</a></li>
+    <li><a href="#python">Python</a></li>
+    <li><a href="#frontend">Frontend</a></li>
+    <li><a href="#rust">Rust</a></li>
+    <li><a href="#cicd">CI/CD</a></li>
+    <li><a href="#troubleshoot">Troubleshoot</a></li>
+    <li><a href="#checklist" class="nav-cta">Checklist →</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">dotenv.guide · Updated January 2026</div>
+
+  <h1>
+    <span class="mono"># .env</span>
+    The Only<br>Reference<br>You Need
+  </h1>
+
+  <p class="hero-sub">
+    Everything about environment variables — Python, Django, FastAPI, React, Next.js, Vite, Rust, Docker &amp; GitHub Actions — in one place. No more hunting through 12 different docs.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#start" class="btn-primary">Start Reading →</a>
+    <a href="#troubleshoot" class="btn-secondary">Jump to Troubleshoot</a>
+  </div>
+
+  <div class="stack-row">
+    <div class="stack-badge">Python</div>
+    <div class="stack-badge">Django</div>
+    <div class="stack-badge">FastAPI</div>
+    <div class="stack-badge">React</div>
+    <div class="stack-badge">Next.js</div>
+    <div class="stack-badge">Vite</div>
+    <div class="stack-badge">Rust</div>
+    <div class="stack-badge">Docker</div>
+    <div class="stack-badge">GitHub Actions</div>
+    <div class="stack-badge">AWS Secrets</div>
+    <div class="stack-badge">Doppler</div>
+  </div>
+</section>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- ═══ THE STORY ═══ -->
+<section class="section" id="start">
+  <div class="section-label">// Why This Exists</div>
+  <h2>The 2 AM Wake-Up Call</h2>
+
+  <div class="story-box">
+    <div class="quote-mark">"</div>
+    <p>It was a Tuesday night. 11:47 PM. I pushed what I thought was a clean refactor to GitHub. <strong>I went to sleep feeling productive.</strong></p>
+    <p>My phone woke me at 2:14 AM with an AWS billing alert: <strong>$4,200 in charges — in two hours.</strong> A bot had scraped GitHub within minutes of my push, found <code>AWS_ACCESS_KEY_ID</code> hardcoded on line 7 of a utility file, and spun up 40 GPU instances to mine cryptocurrency.</p>
+    <p style="margin-bottom:0;">That night I became obsessed with secrets management. This site is the guide I wish existed then.</p>
+  </div>
+
+  <p>Environment variables are strings. They solve one problem: keeping sensitive config <em>out of your code</em>. The <code class="ic">.env</code> file is just a local convenience for loading them during development. Here's the full picture.</p>
+
+  <h3>The File Hierarchy</h3>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>File</th><th>Commit?</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>.env</strong></td><td>❌ Never</td><td>Local real values — your actual secrets</td></tr>
+        <tr><td><strong>.env.example</strong></td><td>✅ Always</td><td>Template with placeholder values — the contract for your team</td></tr>
+        <tr><td><strong>.env.local</strong></td><td>❌ Never</td><td>Machine-specific overrides (Next.js / Vite convention)</td></tr>
+        <tr><td><strong>.env.development</strong></td><td>✅ OK*</td><td>Non-secret dev defaults shared by the team</td></tr>
+        <tr><td><strong>.env.production</strong></td><td>❌ Never</td><td>Managed by infra/CI — never lives in the repo</td></tr>
+        <tr><td><strong>.env.test</strong></td><td>✅ OK*</td><td>CI test values (mock keys only)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13px; color: var(--dim);">* Only commit these if they contain zero real credentials — test DB, mock API keys, etc.</p>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>📄 .gitignore — put this in every project before writing a line of code</span><span class="lang-tag lang-sh">SHELL</span></div>
+    <pre><span class="cc"># Env files — never commit</span>
+.env
+.env.local
+.env.production
+.env.staging
+.env.*.local
+
+<span class="cc"># DO commit this:</span>
+<span class="cc"># .env.example  ← don't add to .gitignore</span></pre>
+  </div>
+
+  <div class="callout danger">
+    <span class="ci-icon">🚨</span>
+    <p><strong>Already committed secrets?</strong> Simply deleting the file is not enough — Git history still contains them. Use <code class="ic">git filter-repo</code> or BFG Repo Cleaner to purge history AND immediately rotate every exposed key. Assume they're compromised the moment they touched a remote.</p>
+  </div>
+</section>
+
+<!-- ═══ PYTHON ═══ -->
+<section class="section" id="python">
+  <div class="section-label">// Stack Guide</div>
+  <h2>Python, Django &amp; FastAPI</h2>
+
+  <h3>Bare Python Script — python-dotenv</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>Terminal</span><span class="lang-tag lang-sh">SHELL</span></div>
+    <pre>pip install python-dotenv</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>config.py — your single source of truth</span><span class="lang-tag lang-py">PYTHON</span></div>
+    <pre><span class="cw">import</span> os
+<span class="cw">from</span> dotenv <span class="cw">import</span> load_dotenv
+<span class="cw">from</span> pathlib <span class="cw">import</span> Path
+
+<span class="cc"># Always resolve relative to this file — not the CWD</span>
+load_dotenv(dotenv_path=Path(<span class="cf">__file__</span>).resolve().parent / <span class="cs">".env"</span>)
+
+<span class="ck">DATABASE_URL</span> = os.getenv(<span class="cs">"DATABASE_URL"</span>)
+<span class="ck">SECRET_KEY</span>   = os.environ[<span class="cs">"SECRET_KEY"</span>]     <span class="cc"># raises KeyError if missing</span>
+<span class="ck">DEBUG</span>        = os.getenv(<span class="cs">"DEBUG"</span>, <span class="cs">"False"</span>).lower() <span class="cw">in</span> (<span class="cs">"true"</span>, <span class="cs">"1"</span>)
+
+<span class="cc"># Fail fast at startup — not silently at runtime</span>
+<span class="cw">def</span> <span class="cf">validate_env</span>():
+    required = [<span class="cs">"SECRET_KEY"</span>, <span class="cs">"DATABASE_URL"</span>]
+    missing  = [k <span class="cw">for</span> k <span class="cw">in</span> required <span class="cw">if not</span> os.getenv(k)]
+    <span class="cw">if</span> missing:
+        <span class="cw">raise</span> <span class="cf">RuntimeError</span>(<span class="cs">f"Missing required env vars: {missing}"</span>)
+
+validate_env()</pre>
+  </div>
+
+  <h3>Django — django-environ</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>settings.py</span><span class="lang-tag lang-py">PYTHON</span></div>
+    <pre><span class="cw">import</span> environ
+<span class="cw">from</span> pathlib <span class="cw">import</span> Path
+
+<span class="ck">BASE_DIR</span> = Path(<span class="cf">__file__</span>).resolve().parent.parent
+<span class="ck">env</span> = environ.<span class="cf">Env</span>(DEBUG=(<span class="cf">bool</span>, <span class="cw">False</span>), ALLOWED_HOSTS=(<span class="cf">list</span>, [<span class="cs">"localhost"</span>]))
+environ.Env.<span class="cf">read_env</span>(BASE_DIR / <span class="cs">".env"</span>)
+
+<span class="ck">SECRET_KEY</span>     = env(<span class="cs">"SECRET_KEY"</span>)
+<span class="ck">DEBUG</span>          = env(<span class="cs">"DEBUG"</span>)
+<span class="ck">ALLOWED_HOSTS</span>  = env(<span class="cs">"ALLOWED_HOSTS"</span>)
+
+<span class="ck">DATABASES</span>      = {<span class="cs">"default"</span>: env.<span class="cf">db</span>(<span class="cs">"DATABASE_URL"</span>)}
+<span class="ck">CACHES</span>         = {<span class="cs">"default"</span>: env.<span class="cf">cache</span>(<span class="cs">"REDIS_URL"</span>)}
+
+<span class="ck">AWS_ACCESS_KEY_ID</span>     = env(<span class="cs">"AWS_ACCESS_KEY_ID"</span>, default=<span class="cw">None</span>)
+<span class="ck">AWS_SECRET_ACCESS_KEY</span> = env(<span class="cs">"AWS_SECRET_ACCESS_KEY"</span>, default=<span class="cw">None</span>)
+<span class="ck">STRIPE_SECRET_KEY</span>     = env(<span class="cs">"STRIPE_SECRET_KEY"</span>)
+<span class="ck">OPENAI_API_KEY</span>        = env(<span class="cs">"OPENAI_API_KEY"</span>, default=<span class="cw">None</span>)</pre>
+  </div>
+
+  <h3>FastAPI — pydantic-settings (Type-Safe)</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>core/config.py</span><span class="lang-tag lang-py">PYTHON</span></div>
+    <pre><span class="cw">from</span> pydantic_settings <span class="cw">import</span> BaseSettings, SettingsConfigDict
+<span class="cw">from</span> pydantic <span class="cw">import</span> AnyUrl, SecretStr
+<span class="cw">from</span> functools <span class="cw">import</span> lru_cache
+
+<span class="cw">class</span> <span class="cf">Settings</span>(BaseSettings):
+    model_config = SettingsConfigDict(env_file=<span class="cs">".env"</span>, case_sensitive=<span class="cw">False</span>)
+
+    app_name:     <span class="cf">str</span> = <span class="cs">"My API"</span>
+    debug:        <span class="cf">bool</span> = <span class="cw">False</span>
+    database_url: AnyUrl
+    secret_key:   <span class="cf">SecretStr</span>  <span class="cc"># masked in logs: **********</span>
+    openai_key:   <span class="cf">SecretStr</span>
+    redis_url:    <span class="cf">str</span> | <span class="cw">None</span> = <span class="cw">None</span>
+
+<span class="cw">@lru_cache</span>
+<span class="cw">def</span> <span class="cf">get_settings</span>() -> Settings:
+    <span class="cw">return</span> <span class="cf">Settings</span>()
+
+<span class="cc"># Usage anywhere: from core.config import get_settings</span>
+<span class="cc">#                 settings = get_settings()</span></pre>
+  </div>
+
+  <div class="callout info">
+    <span class="ci-icon">💡</span>
+    <p><strong>SecretStr</strong> in Pydantic displays as <code class="ic">**********</code> in logs and tracebacks. Always use it for API keys, passwords, and tokens to prevent accidental exposure.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>📄 .env — Python/Django example</span><span class="lang-tag lang-env">ENV</span></div>
+    <pre><span class="cc"># App</span>
+<span class="ck">SECRET_KEY</span>=<span class="cv">django-insecure-dev-key-changeme</span>
+<span class="ck">DEBUG</span>=<span class="cv">True</span>
+<span class="ck">ALLOWED_HOSTS</span>=<span class="cv">localhost,127.0.0.1</span>
+
+<span class="cc"># Database</span>
+<span class="ck">DATABASE_URL</span>=<span class="cv">postgresql://user:pass@localhost:5432/mydb</span>
+<span class="ck">REDIS_URL</span>=<span class="cv">redis://localhost:6379/0</span>
+
+<span class="cc"># Third-party</span>
+<span class="ck">STRIPE_SECRET_KEY</span>=<span class="cv">sk_test_xxxxxxxxxxxxxxxx</span>
+<span class="ck">OPENAI_API_KEY</span>=<span class="cv">sk-proj-xxxxxxxxxxxxxxxx</span>
+<span class="ck">AWS_ACCESS_KEY_ID</span>=<span class="cv">AKIAIOSFODNN7EXAMPLE</span>
+<span class="ck">AWS_SECRET_ACCESS_KEY</span>=<span class="cv">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span></pre>
+  </div>
+</section>
+
+<!-- ═══ FRONTEND ═══ -->
+<section class="section" id="frontend">
+  <div class="section-label">// Stack Guide</div>
+  <h2>React, Next.js &amp; Vite</h2>
+
+  <div class="callout danger">
+    <span class="ci-icon">🚨</span>
+    <p><strong>Frontend vars are public.</strong> Anything bundled into your JS is visible in DevTools. Only put <em>public-facing keys</em> (Stripe publishable, Sentry DSN, analytics) in frontend env vars. Secret keys belong on the server only.</p>
+  </div>
+
+  <h3>Next.js — The Prefix Rule</h3>
+  <p>Next.js uses a deliberate two-tier system. Variables prefixed with <code class="ic">NEXT_PUBLIC_</code> are inlined into the browser bundle at build time. All others are server-only.</p>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>📄 .env.local — Next.js project</span><span class="lang-tag lang-env">ENV</span></div>
+    <pre><span class="cc"># Server-only — NEVER reaches the browser</span>
+<span class="ck">DATABASE_URL</span>=<span class="cv">postgresql://user:pass@localhost/mydb</span>
+<span class="ck">STRIPE_SECRET_KEY</span>=<span class="cv">sk_test_xxxxxxx</span>
+<span class="ck">OPENAI_API_KEY</span>=<span class="cv">sk-proj-xxxxxxx</span>
+
+<span class="cc"># NEXT_PUBLIC_ → inlined into browser bundle at build time</span>
+<span class="ck">NEXT_PUBLIC_STRIPE_PK</span>=<span class="cv">pk_test_xxxxxxx</span>
+<span class="ck">NEXT_PUBLIC_API_URL</span>=<span class="cv">http://localhost:8000</span>
+<span class="ck">NEXT_PUBLIC_SENTRY_DSN</span>=<span class="cv">https://<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ccadaeaf8cbfa9a2b8beb5e2a5a3">[email&#160;protected]</a>/123</span></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>app/actions/payment.ts — server action, secret key safe here</span><span class="lang-tag lang-ts">TYPESCRIPT</span></div>
+    <pre><span class="cs">"use server"</span>
+<span class="cw">import</span> Stripe <span class="cw">from</span> <span class="cs">"stripe"</span>
+
+<span class="cc">// Runs on server — process.env.STRIPE_SECRET_KEY never reaches browser</span>
+<span class="cw">const</span> stripe = <span class="cw">new</span> <span class="cf">Stripe</span>(process.env.<span class="ck">STRIPE_SECRET_KEY</span>!)
+
+<span class="cw">export async function</span> <span class="cf">createCheckout</span>(priceId: string) {
+  <span class="cw">const</span> session = <span class="cw">await</span> stripe.checkout.sessions.<span class="cf">create</span>({
+    line_items: [{ price: priceId, quantity: <span class="cn">1</span> }],
+    mode: <span class="cs">"payment"</span>,
+    success_url: <span class="cs">`${process.env.NEXT_PUBLIC_API_URL}/success`</span>,
+  })
+  <span class="cw">return</span> session.url
+}</pre>
+  </div>
+
+  <h3>Next.js — Load Priority Order</h3>
+  <div class="flow">
+    <div class="fstep"><div class="fi">📄</div><strong>.env</strong><span>Base defaults</span></div>
+    <div class="fstep"><div class="fi">🌍</div><strong>.env.local</strong><span>Local overrides</span></div>
+    <div class="fstep"><div class="fi">🔧</div><strong>.env.development</strong><span>Dev-specific</span></div>
+    <div class="fstep"><div class="fi">🔑</div><strong>.env.development.local</strong><span>Highest priority</span></div>
+  </div>
+
+  <h3>Vite — VITE_ Prefix</h3>
+  <div class="code-wrap">
+    <div class="code-bar"><span>📄 .env — Vite project</span><span class="lang-tag lang-env">ENV</span></div>
+    <pre><span class="cc"># VITE_ prefix = exposed to browser</span>
+<span class="ck">VITE_API_URL</span>=<span class="cv">http://localhost:8000</span>
+<span class="ck">VITE_STRIPE_PK</span>=<span class="cv">pk_test_xxxxxxx</span>
+
+<span class="cc"># No prefix = build-scripts only (not bundled)</span>
+<span class="ck">BUILD_TIMESTAMP</span>=<span class="cv">2026-01-01</span></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>src/vite-env.d.ts — add TypeScript types</span><span class="lang-tag lang-ts">TYPESCRIPT</span></div>
+    <pre><span class="cc">// src/vite-env.d.ts</span>
+<span class="cw">interface</span> ImportMetaEnv {
+  <span class="cw">readonly</span> <span class="ck">VITE_API_URL</span>: string
+  <span class="cw">readonly</span> <span class="ck">VITE_STRIPE_PK</span>: string
+}
+<span class="cw">interface</span> ImportMeta {
+  <span class="cw">readonly</span> env: ImportMetaEnv
+}
+
+<span class="cc">// Usage: import.meta.env.VITE_API_URL</span></pre>
+  </div>
+
+  <h3>Prefix Quick Reference</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Framework</th><th>Browser Prefix</th><th>Access</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Next.js</strong></td><td><code class="ic">NEXT_PUBLIC_</code></td><td><code class="ic">process.env.NEXT_PUBLIC_X</code></td></tr>
+        <tr><td><strong>Vite</strong></td><td><code class="ic">VITE_</code></td><td><code class="ic">import.meta.env.VITE_X</code></td></tr>
+        <tr><td><strong>Create React App</strong></td><td><code class="ic">REACT_APP_</code></td><td><code class="ic">process.env.REACT_APP_X</code></td></tr>
+        <tr><td><strong>Gatsby</strong></td><td><code class="ic">GATSBY_</code></td><td><code class="ic">process.env.GATSBY_X</code></td></tr>
+        <tr><td><strong>Astro</strong></td><td><code class="ic">PUBLIC_</code></td><td><code class="ic">import.meta.env.PUBLIC_X</code></td></tr>
+        <tr><td><strong>SvelteKit</strong></td><td><code class="ic">PUBLIC_</code></td><td><code class="ic">$env/static/public</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══ RUST ═══ -->
+<section class="section" id="rust">
+  <div class="section-label">// Stack Guide</div>
+  <h2>Rust — dotenvy &amp; config</h2>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>Cargo.toml</span><span class="lang-tag lang-rs">TOML</span></div>
+    <pre>[dependencies]
+<span class="ck">dotenvy</span>  = <span class="cs">"0.15"</span>
+<span class="ck">config</span>   = <span class="cs">"0.14"</span>
+<span class="ck">serde</span>    = { version = <span class="cs">"1"</span>, features = [<span class="cs">"derive"</span>] }
+<span class="ck">secrecy</span>  = { version = <span class="cs">"0.8"</span>, features = [<span class="cs">"serde"</span>] }
+<span class="ck">anyhow</span>   = <span class="cs">"1"</span>
+<span class="ck">tokio</span>    = { version = <span class="cs">"1"</span>, features = [<span class="cs">"full"</span>] }</pre>
+  </div>
+
+  <h3>Simple — dotenvy</h3>
+  <div class="code-wrap">
+    <div class="code-bar"><span>src/main.rs</span><span class="lang-tag lang-rs">RUST</span></div>
+    <pre><span class="cw">fn</span> <span class="cf">main</span>() -> anyhow::Result<span class="cc">&lt;</span>()<span class="cc">&gt;</span> {
+    dotenvy::<span class="cf">dotenv</span>().ok();  <span class="cc">// no-op if .env doesn't exist</span>
+
+    <span class="cw">let</span> db_url: String = std::env::<span class="cf">var</span>(<span class="cs">"DATABASE_URL"</span>)
+        .<span class="cf">expect</span>(<span class="cs">"DATABASE_URL must be set"</span>);
+
+    <span class="cw">let</span> port: u16 = std::env::<span class="cf">var</span>(<span class="cs">"PORT"</span>)
+        .<span class="cf">unwrap_or_else</span>(|_| <span class="cs">"8000"</span>.<span class="cf">to_string</span>())
+        .<span class="cf">trim</span>().<span class="cf">parse</span>()
+        .<span class="cf">expect</span>(<span class="cs">"PORT must be a valid u16"</span>);
+
+    <span class="cf">Ok</span>(())
+}</pre>
+  </div>
+
+  <h3>Production — config + secrecy</h3>
+  <div class="code-wrap">
+    <div class="code-bar"><span>src/config.rs</span><span class="lang-tag lang-rs">RUST</span></div>
+    <pre><span class="cw">use</span> config::{Config, Environment};
+<span class="cw">use</span> secrecy::SecretString;
+<span class="cw">use</span> serde::Deserialize;
+
+<span class="cc">#[derive(Debug, Deserialize, Clone)]</span>
+<span class="cw">pub struct</span> <span class="cf">DatabaseConfig</span> {
+    <span class="cw">pub</span> url:             SecretString,  <span class="cc">// zeroized on drop, hidden in Debug</span>
+    <span class="cw">pub</span> max_connections: u32,
+}
+
+<span class="cc">#[derive(Debug, Deserialize, Clone)]</span>
+<span class="cw">pub struct</span> <span class="cf">AppConfig</span> {
+    <span class="cw">pub</span> environment: String,
+    <span class="cw">pub</span> port:        u16,
+    <span class="cw">pub</span> database:    DatabaseConfig,
+    <span class="cw">pub</span> secret_key:  SecretString,
+}
+
+<span class="cw">pub fn</span> <span class="cf">load_config</span>() -> anyhow::Result<span class="cc">&lt;</span>AppConfig<span class="cc">&gt;</span> {
+    dotenvy::<span class="cf">dotenv</span>().ok();
+
+    <span class="cw">let</span> cfg = Config::builder()
+        .<span class="cf">add_source</span>(Environment::<span class="cf">default</span>().<span class="cf">separator</span>(<span class="cs">"__"</span>))
+        .<span class="cf">build</span>()?;
+        <span class="cc">// DATABASE__URL=postgres://... → config.database.url</span>
+        <span class="cc">// DATABASE__MAX_CONNECTIONS=10</span>
+
+    <span class="cf">Ok</span>(cfg.<span class="cf">try_deserialize</span>()?)
+}</pre>
+  </div>
+</section>
+
+<!-- ═══ ALTERNATIVES ═══ -->
+<section class="section" id="alternatives">
+  <div class="section-label">// Beyond .env Files</div>
+  <h2>All Alternatives at a Glance</h2>
+
+  <p><code class="ic">.env</code> files are fine for local dev. For production, use a proper secrets manager. Here's the full landscape.</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Tool</th><th>Best For</th><th>Cost</th><th>Auto-Rotation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>.env files</strong></td><td>Local development</td><td>Free</td><td>❌</td></tr>
+        <tr><td><strong>AWS Secrets Manager</strong></td><td>AWS workloads, production</td><td>~$0.40/secret/mo</td><td>✅</td></tr>
+        <tr><td><strong>AWS SSM Parameter Store</strong></td><td>AWS, budget-conscious</td><td>Free / $0.05 advanced</td><td>❌</td></tr>
+        <tr><td><strong>HashiCorp Vault</strong></td><td>Multi-cloud, enterprise</td><td>Free (self-hosted)</td><td>✅</td></tr>
+        <tr><td><strong>Doppler</strong></td><td>Multi-env teams, DX-first</td><td>Free tier / $6+/mo</td><td>✅</td></tr>
+        <tr><td><strong>Infisical</strong></td><td>Open-source Doppler alternative</td><td>Free (self-hosted)</td><td>✅</td></tr>
+        <tr><td><strong>GCP Secret Manager</strong></td><td>GCP workloads</td><td>$0.06/10k accesses</td><td>✅</td></tr>
+        <tr><td><strong>Azure Key Vault</strong></td><td>Azure workloads</td><td>$0.03/10k ops</td><td>✅</td></tr>
+        <tr><td><strong>Vercel / Railway / Render env UI</strong></td><td>PaaS deployments</td><td>Included</td><td>❌</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>Terminal — Doppler: zero .env files in production</span><span class="lang-tag lang-sh">SHELL</span></div>
+    <pre><span class="cc"># Install Doppler CLI</span>
+brew install dopplerhq/cli/doppler
+
+<span class="cc"># Authenticate and link project</span>
+doppler login && doppler setup
+
+<span class="cc"># Doppler injects secrets — no .env file needed</span>
+doppler run -- python manage.py runserver
+doppler run -- npm run dev
+doppler run -- cargo run</pre>
+  </div>
+</section>
+
+<!-- ═══ CI/CD ═══ -->
+<section class="section" id="cicd">
+  <div class="section-label">// CI/CD &amp; Containers</div>
+  <h2>GitHub Actions &amp; Docker</h2>
+
+  <p>In CI/CD pipelines, there are no <code class="ic">.env</code> files. Variables are injected via encrypted secrets from your platform. Here's the right way.</p>
+
+  <h3>GitHub Actions</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>.github/workflows/deploy.yml</span><span class="lang-tag lang-yml">YAML</span></div>
+    <pre>name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      <span class="cc"># Injected from Settings → Secrets and variables → Actions</span>
+      <span class="ck">DATABASE_URL</span>:       <span class="cv">${{ secrets.TEST_DATABASE_URL }}</span>
+      <span class="ck">SECRET_KEY</span>:         <span class="cv">${{ secrets.DJANGO_SECRET_KEY }}</span>
+      <span class="ck">STRIPE_SECRET_KEY</span>:  <span class="cv">${{ secrets.STRIPE_SECRET_KEY }}</span>
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: python manage.py test
+
+  deploy-prod:
+    environment: production   <span class="cc"># requires manual approval</span>
+    needs: test
+    steps:
+      - name: Deploy
+        env:
+          <span class="ck">API_KEY</span>: <span class="cv">${{ secrets.API_KEY }}</span>   <span class="cc"># production value</span>
+        run: |
+          docker compose up -d --build</pre>
+  </div>
+
+  <h3>Docker Compose</h3>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>docker-compose.yml — development</span><span class="lang-tag lang-dk">DOCKER</span></div>
+    <pre>services:
+  api:
+    build: ./backend
+    env_file:
+      - ./backend/.env        <span class="cc"># path relative to compose file</span>
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    env_file:
+      - ./frontend/.env.local
+    ports: ["3000:3000"]
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localpass
+      POSTGRES_DB: mydb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-bar"><span>Dockerfile — correct approach</span><span class="lang-tag lang-dk">DOCKER</span></div>
+    <pre>FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+
+<span class="cc"># ✅ Non-secret config as ENV is fine</span>
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+
+<span class="cc"># 🚨 Never bake secrets into image layers</span>
+<span class="cc"># ENV SECRET_KEY=mykey   ← visible in docker inspect</span>
+<span class="cc"># ENV DATABASE_URL=...   ← visible in every derived image</span>
+
+EXPOSE $PORT
+CMD ["gunicorn", "myapp.wsgi:application"]</pre>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci-icon">⚠️</span>
+    <p><strong>Build-time secret in Next.js?</strong> <code class="ic">NEXT_PUBLIC_</code> variables must exist at <code class="ic">next build</code> time — not just at runtime. Pass them to your CI build step explicitly, otherwise they'll be <code class="ic">undefined</code> in the bundle even if set on the server.</p>
+  </div>
+</section>
+
+<!-- ═══ TROUBLESHOOT ═══ -->
+<section class="section" id="troubleshoot">
+  <div class="section-label">// The Hard Lessons</div>
+  <h2>10 Bugs You'll Actually Hit</h2>
+
+  <details>
+    <summary>1. Variables are undefined / None everywhere<span class="t-tag tt-bug">Common</span></summary>
+    <div class="detail-body">
+      <p><strong>Cause 1:</strong> <code class="ic">load_dotenv()</code> was called after importing a module that already read the variable. Move it to the very top of your entry point, before all other imports.</p>
+      <p><strong>Cause 2:</strong> Wrong path. If your working directory differs from the file location:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre>load_dotenv(dotenv_path=Path(<span class="cf">__file__</span>).resolve().parent / <span class="cs">".env"</span>)</pre></div>
+      <p><strong>Cause 3:</strong> A real OS env var with the same name exists and <code class="ic">override=False</code> (the default) blocks the .env value. Add <code class="ic">override=True</code>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>2. NEXT_PUBLIC_ variable is undefined in production<span class="t-tag tt-ci">CI/CD</span></summary>
+    <div class="detail-body">
+      <p>These are inlined at <strong>build time</strong>. If they're not set when you run <code class="ic">next build</code>, they'll be <code class="ic">undefined</code> even if the server has them. Pass them to your build step:</p>
+      <div class="code-wrap"><div class="code-bar"><span>GitHub Actions</span><span class="lang-tag lang-yml">YAML</span></div>
+      <pre>- name: Build Next.js
+  env:
+    <span class="ck">NEXT_PUBLIC_API_URL</span>: <span class="cv">${{ secrets.PRODUCTION_API_URL }}</span>
+  run: npm run build</pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>3. Docker Compose "env_file not found" error<span class="t-tag tt-docker">Docker</span></summary>
+    <div class="detail-body">
+      <p>Docker Compose resolves <code class="ic">env_file</code> paths relative to the <strong>Compose file location</strong>, not where you ran the command. Also ensure the file exists first — create an empty one if needed: <code class="ic">touch backend/.env</code>.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>4. Boolean env vars behave unexpectedly ("False" is truthy)<span class="t-tag tt-bug">Bug</span></summary>
+    <div class="detail-body">
+      <p>Every env var is a <strong>string</strong>. <code class="ic">os.getenv("DEBUG")</code> returns the string <code class="ic">"False"</code> — which is truthy in Python. Always parse booleans explicitly:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre><span class="cc"># ❌ Wrong — "False" string is truthy</span>
+<span class="cw">if</span> os.getenv(<span class="cs">"DEBUG"</span>): ...
+
+<span class="cc"># ✅ Correct</span>
+<span class="ck">DEBUG</span> = os.getenv(<span class="cs">"DEBUG"</span>, <span class="cs">"False"</span>).lower() <span class="cw">in</span> (<span class="cs">"true"</span>, <span class="cs">"1"</span>, <span class="cs">"yes"</span>)</pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>5. Secrets appear in Sentry / error logs<span class="t-tag tt-bug">Security</span></summary>
+    <div class="detail-body">
+      <p>Uncaught exceptions can capture local variable frames — including your settings dict. Use <code class="ic">SecretStr</code> (Pydantic) or <code class="ic">SecretString</code> (Rust secrecy), and configure Sentry to scrub sensitive keys:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre>sentry_sdk.<span class="cf">init</span>(dsn=..., send_default_pii=<span class="cw">False</span>)</pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>6. Vite: import.meta.env.VITE_X is undefined<span class="t-tag tt-bug">Common</span></summary>
+    <div class="detail-body">
+      <p>Two causes: (1) variable name doesn't start with <code class="ic">VITE_</code> — Vite strips all others. (2) You modified <code class="ic">.env</code> while the dev server was running — Vite requires a full server restart (not HMR) to pick up new env vars.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>7. GitHub Actions: secret shows as *** but app still fails<span class="t-tag tt-ci">CI/CD</span></summary>
+    <div class="detail-body">
+      <p>*** just means GitHub masked it in logs — the value could still be wrong. Check: (1) Secret name mismatch — <code class="ic">secrets.MY_SECRET</code> vs actual GitHub secret name. (2) Secret stored under a specific Environment but the job doesn't set <code class="ic">environment:</code>. (3) Trailing whitespace in the stored value. Debug with:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre>- run: echo <span class="cs">"Length: ${#MY_SECRET}"</span>
+  env:
+    <span class="ck">MY_SECRET</span>: <span class="cv">${{ secrets.MY_SECRET }}</span></pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>8. Works locally, fails in production (ALLOWED_HOSTS / DB host)<span class="t-tag tt-bug">Django</span></summary>
+    <div class="detail-body">
+      <p>Two classic Django mismatches: (1) <code class="ic">ALLOWED_HOSTS</code> doesn't include your production domain. (2) <code class="ic">DATABASE_URL</code> uses <code class="ic">localhost</code> as host — in Docker, use the service name (<code class="ic">db</code>) instead:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre><span class="cc"># Local</span>   DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+<span class="cc"># Docker</span>  DATABASE_URL=postgresql://user:pass@db:5432/mydb
+<span class="cc"># Prod</span>    DATABASE_URL=postgresql://user:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f989988a8ab994809d9bd78b9d8ad7989498839697988e8ad79a9694">[email&#160;protected]</a>:5432/mydb</pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>9. Rust: parse panic on env var with whitespace or wrong type<span class="t-tag tt-rust">Rust</span></summary>
+    <div class="detail-body">
+      <p>A value like <code class="ic">PORT=8000 </code> (trailing space) causes <code class="ic">.parse::&lt;u16&gt;()</code> to fail. Always trim and handle the error:</p>
+      <div class="code-wrap"><div class="code-bar"><span></span></div>
+      <pre><span class="cw">let</span> port: u16 = std::env::<span class="cf">var</span>(<span class="cs">"PORT"</span>)
+    .<span class="cf">unwrap_or_else</span>(|_| <span class="cs">"8000"</span>.<span class="cf">to_string</span>())
+    .<span class="cf">trim</span>()
+    .<span class="cf">parse</span>()
+    .<span class="cf">expect</span>(<span class="cs">"PORT must be a valid u16"</span>);</pre></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>10. Teammate added a new variable — app breaks silently for others<span class="t-tag tt-team">Team</span></summary>
+    <div class="detail-body">
+      <p>The new var is in <code class="ic">.env.example</code> but not in teammates' local <code class="ic">.env</code>. Add a validation script and run it in CI and as a pre-commit hook:</p>
+      <div class="code-wrap"><div class="code-bar"><span>scripts/check_env.py</span><span class="lang-tag lang-py">PYTHON</span></div>
+      <pre><span class="cw">import</span> sys
+
+<span class="cw">def</span> <span class="cf">keys</span>(f):
+    <span class="cw">return</span> {l.<span class="cf">split</span>(<span class="cs">"="</span>,<span class="cn">1</span>)[<span class="cn">0</span>].<span class="cf">strip</span>() <span class="cw">for</span> l <span class="cw">in</span> <span class="cf">open</span>(f)
+            <span class="cw">if</span> l.<span class="cf">strip</span>() <span class="cw">and not</span> l.<span class="cf">startswith</span>(<span class="cs">"#"</span>) <span class="cw">and</span> <span class="cs">"="</span> <span class="cw">in</span> l}
+
+missing = <span class="cf">keys</span>(<span class="cs">".env.example"</span>) - <span class="cf">keys</span>(<span class="cs">".env"</span>)
+<span class="cw">if</span> missing:
+    <span class="cf">print</span>(<span class="cs">f"❌ Missing in .env: {missing}"</span>); sys.<span class="cf">exit</span>(<span class="cn">1</span>)
+<span class="cf">print</span>(<span class="cs">"✅ .env is complete"</span>)</pre></div>
+    </div>
+  </details>
+</section>
+
+<!-- ═══ CHECKLIST ═══ -->
+<section class="section" id="checklist">
+  <div class="section-label">// Before Every Deploy</div>
+  <h2>The Complete Checklist</h2>
+
+  <p>Run through this before every project and every deploy. It's the distilled lesson from a lot of painful incidents.</p>
+
+  <div class="checklist">
+    <div class="cl-card">
+      <h4>🔒 Security</h4>
+      <ul>
+        <li><code class="ic">.env</code> is in <code class="ic">.gitignore</code></li>
+        <li><code class="ic">.env.example</code> is committed and current</li>
+        <li>No secrets in Dockerfile <code class="ic">ENV</code></li>
+        <li>No secret keys in frontend bundle</li>
+        <li><code class="ic">SecretStr</code> / <code class="ic">SecretString</code> in use</li>
+        <li>GitHub Push Protection enabled</li>
+      </ul>
+    </div>
+    <div class="cl-card">
+      <h4>🚀 Production</h4>
+      <ul>
+        <li>All secrets injected via CI/CD secrets</li>
+        <li>Different values for dev / staging / prod</li>
+        <li>Startup validation — fail fast on missing vars</li>
+        <li>Rotation plan documented for all keys</li>
+        <li>Sentry/logging scrubs sensitive fields</li>
+        <li>Docker secrets for Swarm containers</li>
+      </ul>
+    </div>
+    <div class="cl-card">
+      <h4>👥 Team</h4>
+      <ul>
+        <li>Setup script copies <code class="ic">.env.example → .env</code></li>
+        <li>CI compares <code class="ic">.env.example</code> vs <code class="ic">.env</code></li>
+        <li>README says where to get real values</li>
+        <li>Shared secrets in a secrets manager</li>
+        <li>Pre-commit hook checks for leaked keys</li>
+      </ul>
+    </div>
+    <div class="cl-card">
+      <h4>🚨 Emergency</h4>
+      <ul>
+        <li>Know how to revoke each key immediately</li>
+        <li><code class="ic">git filter-repo</code> ready for history purge</li>
+        <li>AWS GuardDuty / CloudTrail active</li>
+        <li>Canary tokens set as honeypots</li>
+        <li>Incident response runbook exists</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci-icon">✅</span>
+    <p><strong>Enable GitHub Push Protection right now.</strong> Settings → Code security → Push protection. It blocks pushes containing AWS keys, Stripe keys, GitHub tokens, and 100+ other secret patterns automatically. Free, 30 seconds to enable. Do it now before you forget.</p>
+  </div>
+
+  <div class="hr-subtle"></div>
+
+  <p>The bots are scanning GitHub right now. Continuously. They find exposed keys within <strong>minutes</strong> of a push. The prevention is simple — the recovery is not.</p>
+
+  <div class="tag-row">
+    <span class="chip">python</span>
+    <span class="chip">django</span>
+    <span class="chip">fastapi</span>
+    <span class="chip">nextjs</span>
+    <span class="chip">react</span>
+    <span class="chip">vite</span>
+    <span class="chip">rust</span>
+    <span class="chip">docker</span>
+    <span class="chip">github-actions</span>
+    <span class="chip">secrets-management</span>
+    <span class="chip">devops</span>
+    <span class="chip">security</span>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.guide</span></div>
+  <div class="footer-links">
+    <a href="#start">Start Here</a>
+    <a href="#python">Python</a>
+    <a href="#frontend">Frontend</a>
+    <a href="#rust">Rust</a>
+    <a href="#cicd">CI/CD</a>
+    <a href="#troubleshoot">Troubleshooting</a>
+    <a href="#checklist">Checklist</a>
+  </div>
+  <p>The complete environment variable reference · Updated January 2026</p>
+  <p style="margin-top:6px; font-size:12px;">No ads. No tracking. Just docs.</p>
+</footer>
+
+<script>
+// ── COPY BUTTONS ──────────────────────────────────────────
+document.querySelectorAll('.code-bar').forEach(bar => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.setAttribute('aria-label', 'Copy code');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy';
+
+  btn.addEventListener('click', () => {
+    const pre = bar.nextElementSibling;
+    if (!pre) return;
+    const text = pre.innerText || pre.textContent;
+    const doCopy = () => {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><polyline points="20 6 9 17 4 12"></polyline></svg> copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(doCopy).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        doCopy();
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      doCopy();
+    }
+  });
+  bar.appendChild(btn);
+});
+
+// ── MOBILE NAV ────────────────────────────────────────────
+const toggle = document.getElementById('navToggle');
+const links  = document.getElementById('navLinks');
+if (toggle && links) {
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+}
+
+// ── ACTIVE NAV HIGHLIGHT ──────────────────────────────────
+const sections = document.querySelectorAll('[id]');
+const navAs    = document.querySelectorAll('.nav-links a[href^="#"]');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navAs.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + e.target.id ? 'var(--accent)' : '';
+      });
+    }
+  });
+}, { threshold: 0.25, rootMargin: '-60px 0px -40% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
