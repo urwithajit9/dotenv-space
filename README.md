@@ -70,7 +70,7 @@ Quick summary:
 No build step needed:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotenv-space.git
+git clone https://github.com/urwithajit9/dotenv-space.git
 cd dotenv-space
 
 # Option 1 — Python (built-in)
@@ -122,7 +122,7 @@ MIT — use it, fork it, share it. If you build something with it, a link back i
 
 ## Maintainer
 
-Built and maintained by **[@YOUR_USERNAME](https://github.com/YOUR_USERNAME)**.  
+Built and maintained by **[@urwithajit9](https://github.com/urwithajit9)**.  
 Found a critical security issue? Email: `security@dotenv.space`
 
 ---
