@@ -763,11 +763,13 @@ footer p {
   <div class="section-label">// Why This Exists</div>
   <h2>The 2 AM Wake-Up Call</h2>
 
-  <div class="story-box">
+<div class="story-box">
     <div class="quote-mark">"</div>
-    <p>It was a Tuesday night. 11:47 PM. I pushed what I thought was a clean refactor to GitHub. <strong>I went to sleep feeling productive.</strong></p>
-    <p>My phone woke me at 2:14 AM with an AWS billing alert: <strong>$4,200 in charges — in two hours.</strong> A bot had scraped GitHub within minutes of my push, found <code>AWS_ACCESS_KEY_ID</code> hardcoded on line 7 of a utility file, and spun up 40 GPU instances to mine cryptocurrency.</p>
-    <p style="margin-bottom:0;">That night I became obsessed with secrets management. This site is the guide I wish existed then.</p>
+    <p>This kind of incident is more common in the DevOps community than anyone admits publicly. Tight deadlines, complex projects, one unguarded file — and suddenly you're in damage control. Here's mine.</p>
+    <p>I was refactoring an Apache Airflow project — around <strong>20 DAGs</strong> and a Scrapy backend running <strong>300+ spiders</strong>. Not a toy project. Real production infrastructure, tight schedule, pressure to move fast.</p>
+    <p>A test <code>.py</code> file slipped through and got pushed to the remote. Almost immediately, emails started flooding in — info alerts, warnings, key revocation notices. Since that key was shared across other services, <strong>those went down too.</strong> One unguarded file. A cascade failure.</p>
+    <p>Then came the part that stung most: walking into my development head's office to explain why I needed a new AWS key created. That conversation was more painful than any billing alert.</p>
+    <p style="margin-bottom:0;">In hindsight, some blame goes to the tight schedule — but also to my own carelessness. A pre-commit hook or basic secret scanning would have stopped it entirely. <strong>Bots scan GitHub continuously. They found the key within minutes of the push.</strong> That day I became obsessed with safeguards. This site is the reference I wish existed then.</p>
   </div>
 
   <p>Environment variables are strings. They solve one problem: keeping sensitive config <em>out of your code</em>. The <code class="ic">.env</code> file is just a local convenience for loading them during development. Here's the full picture.</p>
