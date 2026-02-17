@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 💬 Ask a Question
+    url: https://github.com/urwithajit9/dotenv-space/discussions/new?category=q-a
+    about: Use Discussions for questions — not Issues.
+
+  - name: 💡 Share an Idea
+    url: https://github.com/urwithajit9/dotenv-space/discussions/new?category=ideas
+    about: Suggest a new section or feature in Discussions first.
+
+  - name: 🌐 Visit dotenv.space
+    url: https://dotenv.space
+    about: The live site.

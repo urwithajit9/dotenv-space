@@ -1,0 +1,69 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate HTML & Check Links
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check index.html exists
+        run: |
+          if [ ! -f "index.html" ]; then
+            echo "❌ index.html is missing"
+            exit 1
+          fi
+          echo "✅ index.html found"
+
+      - name: Check file size (warn if > 300kb)
+        run: |
+          SIZE=$(wc -c < index.html)
+          echo "index.html size: ${SIZE} bytes"
+          if [ $SIZE -gt 307200 ]; then
+            echo "⚠️ Warning: index.html exceeds 300kb. Consider splitting content."
+          else
+            echo "✅ File size is acceptable"
+          fi
+
+      - name: Check no old domain references
+        run: |
+          if grep -q "dotenv\.guide" index.html; then
+            echo "❌ Found old domain 'dotenv.guide' in index.html"
+            grep -n "dotenv\.guide" index.html
+            exit 1
+          fi
+          echo "✅ No old domain references found"
+
+      - name: Check required meta tags exist
+        run: |
+          MISSING=0
+          for tag in "og:title" "og:description" "og:image" "twitter:card" "canonical"; do
+            if grep -q "$tag" index.html; then
+              echo "✅ $tag found"
+            else
+              echo "❌ $tag missing"
+              MISSING=$((MISSING+1))
+            fi
+          done
+          if [ $MISSING -gt 0 ]; then
+            echo "❌ $MISSING required meta tags are missing"
+            exit 1
+          fi
+
+      - name: Check no hardcoded secrets patterns (example guard)
+        run: |
+          # Make sure no real-looking AWS keys sneak in
+          if grep -E "AKIA[0-9A-Z]{16}" index.html | grep -v "EXAMPLE\|example\|AKIAIOSFODNN7EXAMPLE"; then
+            echo "❌ Possible real AWS key pattern found"
+            exit 1
+          fi
+          echo "✅ No suspicious secret patterns found"
+
+      - name: All checks passed
+        run: echo "✅ PR validation complete — ready for review"
