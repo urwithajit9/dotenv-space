@@ -1,0 +1,768 @@
+# dotenv.space — Complete Content
+# Version: 1.0.0 | Updated: January 2026
+# Source: https://dotenv.space
+# Format: Plain text optimised for LLM ingestion per llmstxt.org spec
+# License: MIT | github.com/urwithajit9/dotenv-space
+# ============================================================
+
+
+## ABOUT THIS SITE
+
+dotenv.space is the complete .env and environment variable reference for Python, Django, FastAPI, React, Next.js, Vite, Rust, Docker, and GitHub Actions — in one place.
+
+Built after a real production incident: a test .py file slipped into a Git push on an Apache Airflow project (20 DAGs, 300+ Scrapy spiders), causing an AWS key revocation and cascading failures across dependent services. Bots scan GitHub continuously and find exposed keys within minutes.
+
+All code examples are:
+- Tested against specific library versions (version-stamped)
+- Opinionated — one recommended approach per use case
+- Community-validated via GitHub Issues and PRs
+
+
+## SECTION 1: FUNDAMENTALS
+
+### What Is a .env File?
+
+A .env file is a plain text file that defines environment variables for local development. Environment variables are key-value pairs that exist in the operating system's process environment. Applications read them at runtime instead of having values baked into source code.
+
+Example .env file:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+STRIPE_SECRET_KEY=sk_test_abc123
+```
+
+### The .env.example File
+
+The .env.example file is a committed, sanitised template that shows teammates what variables the app needs — without exposing real values. This is the file that goes into version control.
+
+Example .env.example:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/yourdb
+SECRET_KEY=generate-with-openssl-rand-hex-32
+DEBUG=True
+STRIPE_SECRET_KEY=sk_test_YOUR_KEY_HERE
+```
+
+### File Naming Conventions
+
+| File | Commit to Git? | Purpose |
+|------|---------------|---------|
+| .env | Never | Local real values — your actual secrets |
+| .env.example | Always | Template with placeholder values |
+| .env.local | Never | Machine-specific overrides (Next.js/Vite) |
+| .env.development | OK if no real secrets | Non-secret dev defaults |
+| .env.production | Never | Managed by infra/CI only |
+| .env.test | OK if no real secrets | CI test values with mock keys |
+
+### .gitignore — Non-Negotiable
+
+Always add these before writing any code:
+
+```
+.env
+.env.local
+.env.production
+.env.staging
+.env.*.local
+```
+
+Never add .env.example to .gitignore — it must be committed.
+
+### If You Already Committed Secrets
+
+Deleting the file is not enough. Git history still contains the secret.
+1. Use git filter-repo or BFG Repo Cleaner to purge the history
+2. Immediately rotate (revoke and regenerate) every exposed key
+3. Assume all exposed keys are already compromised
+
+
+## SECTION 2: PYTHON
+
+### Bare Python Script — python-dotenv
+
+Installation:
+```
+pip install python-dotenv
+```
+
+Recommended pattern — centralise all env reading in one config.py:
+
+```python
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Always resolve relative to this file — not the working directory
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+
+# Optional with default
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Required — raises KeyError if missing (fail fast, not silently)
+SECRET_KEY = os.environ["SECRET_KEY"]
+
+# Boolean — env vars are always strings, parse explicitly
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
+
+# Startup validation — catch missing vars at boot, not at runtime
+def validate_env():
+    required = ["SECRET_KEY", "DATABASE_URL"]
+    missing = [k for k in required if not os.getenv(k)]
+    if missing:
+        raise RuntimeError(f"Missing required env vars: {missing}")
+
+validate_env()
+```
+
+Key distinctions:
+- os.getenv(key, default) — returns None or default if missing, never raises
+- os.environ[key] — raises KeyError if missing. Use for required variables.
+- load_dotenv() with override=False (default) — real OS env vars take precedence over .env
+- load_dotenv() with override=True — .env values override real env vars (useful for dev)
+
+WARNING: Boolean trap — os.getenv("DEBUG") returns the string "False" which is truthy in Python. Always parse booleans explicitly as shown above.
+
+
+### Django — django-environ
+
+Installation:
+```
+pip install django-environ
+```
+
+Recommended settings.py pattern (tested: django-environ 0.11 · Django 5.1 · January 2026):
+
+```python
+import environ
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, ["localhost"]),
+)
+
+environ.Env.read_env(BASE_DIR / ".env")
+
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+
+# Parses DATABASE_URL string automatically into Django DATABASES dict
+DATABASES = {"default": env.db("DATABASE_URL")}
+
+# Parses Redis URL automatically
+CACHES = {"default": env.cache("REDIS_URL")}
+
+# Third-party keys
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default=None)
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default=None)
+OPENAI_API_KEY = env("OPENAI_API_KEY", default=None)
+```
+
+DATABASE_URL format examples:
+- PostgreSQL: postgresql://user:pass@localhost:5432/dbname
+- MySQL: mysql://user:pass@localhost:3306/dbname
+- SQLite: sqlite:///path/to/db.sqlite3
+
+
+### FastAPI — pydantic-settings (Recommended for all Python apps)
+
+Installation:
+```
+pip install pydantic-settings
+```
+
+Recommended pattern (tested: pydantic-settings 2.4 · Python 3.12 · January 2026):
+
+```python
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AnyUrl, SecretStr
+from functools import lru_cache
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+    )
+
+    # App config
+    app_name: str = "My API"
+    debug: bool = False
+    environment: str = "development"
+
+    # Required — will raise ValidationError at startup if missing
+    database_url: AnyUrl
+    secret_key: SecretStr    # displays as ********** in logs
+    openai_api_key: SecretStr
+
+    # Optional
+    redis_url: str | None = None
+    allowed_origins: list[str] = ["http://localhost:3000"]
+
+# Singleton pattern — loads once, reused everywhere
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+```
+
+SecretStr — values wrapped in SecretStr display as ********** in logs, tracebacks, and repr() output. This prevents accidental credential exposure in error tracking tools like Sentry. Always use SecretStr for API keys, passwords, and tokens.
+
+Usage anywhere in the app:
+```python
+from core.config import get_settings
+settings = get_settings()
+print(settings.database_url)  # works
+print(settings.secret_key)    # prints **********
+print(settings.secret_key.get_secret_value())  # reveals actual value when needed
+```
+
+
+### Multiple Environments — Python
+
+```python
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+ENV = os.getenv("ENV", "development")
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load base .env first, then environment-specific overlay
+env_files = [BASE_DIR / ".env", BASE_DIR / f".env.{ENV}"]
+for f in env_files:
+    if f.exists():
+        load_dotenv(f, override=True)
+```
+
+Run with specific environment:
+```
+ENV=production python manage.py runserver
+ENV=staging python app.py
+```
+
+
+## SECTION 3: REACT, NEXT.JS & VITE
+
+### Critical Rule for Frontend
+
+Environment variables bundled into JavaScript are visible to anyone who opens DevTools. Never put secret keys in frontend env vars. Only public-facing keys belong in the frontend:
+
+SAFE for frontend: Stripe publishable key, Sentry DSN, Google Analytics ID, public API URLs
+NOT SAFE for frontend: Stripe secret key, OpenAI API key, database passwords, private tokens
+
+
+### Next.js — NEXT_PUBLIC_ Prefix
+
+Next.js uses a two-tier system:
+- Variables prefixed NEXT_PUBLIC_ are inlined into the browser bundle at BUILD TIME
+- All other variables are server-only and never reach the browser
+
+File loading priority (later = higher priority = overrides earlier):
+1. .env
+2. .env.local
+3. .env.development (or .env.production)
+4. .env.development.local (or .env.production.local)
+
+Example .env.local for Next.js:
+```
+# Server-only — never reaches browser
+DATABASE_URL=postgresql://user:pass@localhost/mydb
+STRIPE_SECRET_KEY=sk_test_xxxxxxx
+OPENAI_API_KEY=sk-proj-xxxxxxx
+
+# Browser-safe — inlined at build time
+NEXT_PUBLIC_STRIPE_PK=pk_test_xxxxxxx
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SENTRY_DSN=https://abc@sentry.io/123
+```
+
+Server action (safe to use secret key):
+```typescript
+"use server"
+import Stripe from "stripe"
+
+// Runs on server — STRIPE_SECRET_KEY never reaches browser
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+export async function createCheckout(priceId: string) {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [{ price: priceId, quantity: 1 }],
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_API_URL}/success`,
+  })
+  return session.url
+}
+```
+
+Client component (only public key):
+```typescript
+"use client"
+import { loadStripe } from "@stripe/stripe-js"
+
+// NEXT_PUBLIC_ is safe — publishable key is meant to be exposed
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PK!)
+```
+
+IMPORTANT: NEXT_PUBLIC_ variables are inlined at build time, not runtime. They must exist when you run "next build" — not just when the server starts. In CI/CD, pass them to the build step explicitly.
+
+
+### Vite — VITE_ Prefix
+
+Variables must be prefixed with VITE_ to be exposed to the browser. All others are stripped from the bundle.
+
+Example .env for Vite:
+```
+# Browser-exposed (VITE_ prefix required)
+VITE_API_URL=http://localhost:8000
+VITE_STRIPE_PK=pk_test_xxxxxxx
+VITE_SENTRY_DSN=https://abc@sentry.io/123
+
+# Build scripts only — not bundled
+BUILD_TIMESTAMP=2026-01-01
+```
+
+Access in code:
+```typescript
+// Vite uses import.meta.env instead of process.env
+const API_URL = import.meta.env.VITE_API_URL
+```
+
+TypeScript types (add to src/vite-env.d.ts):
+```typescript
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string
+  readonly VITE_STRIPE_PK: string
+}
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+```
+
+NOTE: Modifying .env while the Vite dev server is running requires a full server restart — HMR does not pick up new env vars.
+
+
+### Framework Prefix Reference
+
+| Framework | Browser Prefix | Access Pattern |
+|-----------|---------------|----------------|
+| Next.js | NEXT_PUBLIC_ | process.env.NEXT_PUBLIC_X |
+| Vite | VITE_ | import.meta.env.VITE_X |
+| Create React App | REACT_APP_ | process.env.REACT_APP_X |
+| Gatsby | GATSBY_ | process.env.GATSBY_X |
+| Astro | PUBLIC_ | import.meta.env.PUBLIC_X |
+| SvelteKit | PUBLIC_ | $env/static/public |
+
+
+## SECTION 4: RUST
+
+### Simple Approach — dotenvy
+
+Cargo.toml dependencies:
+```toml
+[dependencies]
+dotenvy = "0.15"
+anyhow = "1"
+```
+
+Basic usage (tested: dotenvy 0.15 · Rust 1.84 · January 2026):
+```rust
+fn main() -> anyhow::Result<()> {
+    // no-op if .env doesn't exist — safe to call in all environments
+    dotenvy::dotenv().ok();
+
+    let database_url = std::env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set");
+
+    // Always trim — trailing whitespace causes parse failures
+    let port: u16 = std::env::var("PORT")
+        .unwrap_or_else(|_| "8000".to_string())
+        .trim()
+        .parse()
+        .expect("PORT must be a valid u16");
+
+    Ok(())
+}
+```
+
+
+### Production Approach — config + secrecy
+
+Cargo.toml dependencies:
+```toml
+[dependencies]
+dotenvy  = "0.15"
+config   = "0.14"
+serde    = { version = "1", features = ["derive"] }
+secrecy  = { version = "0.8", features = ["serde"] }
+anyhow   = "1"
+tokio    = { version = "1", features = ["full"] }
+```
+
+Typed config with secret masking (tested: config 0.14 · secrecy 0.8 · January 2026):
+```rust
+use config::{Config, Environment};
+use secrecy::SecretString;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct DatabaseConfig {
+    pub url: SecretString,        // hidden in Debug output, zeroized on drop
+    pub max_connections: u32,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct AppConfig {
+    pub environment: String,
+    pub port: u16,
+    pub database: DatabaseConfig,
+    pub secret_key: SecretString,
+}
+
+pub fn load_config() -> anyhow::Result<AppConfig> {
+    dotenvy::dotenv().ok();
+
+    let cfg = Config::builder()
+        // __ separator maps DATABASE__URL to config.database.url
+        .add_source(Environment::default().separator("__"))
+        .build()?;
+
+    Ok(cfg.try_deserialize()?)
+}
+```
+
+Environment variable naming with __ separator:
+```
+DATABASE__URL=postgresql://user:pass@localhost/mydb
+DATABASE__MAX_CONNECTIONS=10
+APP__PORT=8080
+APP__ENVIRONMENT=production
+```
+
+secrecy::SecretString — equivalent to Pydantic's SecretStr. Values are:
+- Hidden in Debug output (shows [REDACTED])
+- Zeroized (memory wiped) when dropped
+- Never accidentally logged
+
+
+## SECTION 5: ALTERNATIVES TO .env FILES
+
+| Tool | Best For | Cost | Auto-Rotation |
+|------|----------|------|---------------|
+| .env files | Local development only | Free | No |
+| AWS Secrets Manager | AWS workloads, production | ~$0.40/secret/month | Yes |
+| AWS SSM Parameter Store | AWS, budget-conscious | Free / $0.05 advanced | No |
+| HashiCorp Vault | Multi-cloud, enterprise | Free self-hosted | Yes |
+| Doppler | Multi-env teams, DX-first | Free tier / $6+/month | Yes |
+| Infisical | Open-source Doppler alternative | Free self-hosted | Yes |
+| GCP Secret Manager | GCP workloads | $0.06/10k accesses | Yes |
+| Azure Key Vault | Azure workloads | $0.03/10k operations | Yes |
+| Vercel / Railway / Render | PaaS deployments | Included in platform | No |
+
+Recommendation: Use .env files for local development. Move to a proper secrets manager (Doppler or Infisical for teams, AWS Secrets Manager for AWS-native workloads) for staging and production.
+
+Doppler CLI usage — zero .env files in production:
+```bash
+brew install dopplerhq/cli/doppler
+doppler login
+doppler setup
+doppler run -- python manage.py runserver
+doppler run -- npm run dev
+doppler run -- cargo run
+```
+
+AWS Secrets Manager in Python:
+```python
+import boto3
+import json
+from functools import lru_cache
+
+@lru_cache
+def get_secret(secret_name: str, region: str = "us-east-1") -> dict:
+    client = boto3.client("secretsmanager", region_name=region)
+    response = client.get_secret_value(SecretId=secret_name)
+    return json.loads(response["SecretString"])
+
+# Usage
+secrets = get_secret("prod/myapp/database")
+DB_PASSWORD = secrets["password"]
+```
+
+
+## SECTION 6: DOCKER & GITHUB ACTIONS
+
+### Docker — Never Bake Secrets into Images
+
+Correct Dockerfile approach:
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+
+# OK — non-secret config
+ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
+
+# NEVER do this — visible in docker inspect and every derived image
+# ENV SECRET_KEY=myactualkey
+# ENV DATABASE_URL=postgresql://...
+
+EXPOSE $PORT
+CMD ["gunicorn", "myapp.wsgi:application"]
+```
+
+Values set with ENV in a Dockerfile are visible in:
+- docker inspect <container>
+- Every derived image layer
+- Docker Hub if the image is public
+
+
+### Docker Compose — Development
+
+```yaml
+services:
+  api:
+    build: ./backend
+    env_file:
+      - ./backend/.env    # path is relative to docker-compose.yml location
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    env_file:
+      - ./frontend/.env.local
+    ports: ["3000:3000"]
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localpass
+      POSTGRES_DB: mydb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+```
+
+NOTE: env_file paths are relative to the docker-compose.yml file location, not the directory you run docker compose from.
+
+NOTE: In Docker, use the service name as the database host, not localhost:
+- Local development: DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+- Docker Compose: DATABASE_URL=postgresql://user:pass@db:5432/mydb
+- Production RDS: DATABASE_URL=postgresql://user:pass@mydb.abc.rds.amazonaws.com:5432/mydb
+
+
+### GitHub Actions — Encrypted Secrets
+
+Store secrets in: Repository → Settings → Secrets and variables → Actions
+Reference in workflows as: ${{ secrets.SECRET_NAME }}
+
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL:      ${{ secrets.TEST_DATABASE_URL }}
+      SECRET_KEY:        ${{ secrets.DJANGO_SECRET_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: python manage.py test
+
+  deploy-prod:
+    environment: production    # requires manual approval
+    needs: test
+    steps:
+      - name: Deploy
+        env:
+          API_KEY: ${{ secrets.API_KEY }}    # production-specific value
+        run: docker compose up -d --build
+```
+
+Use GitHub Environments (Settings → Environments) to have different secret values for staging vs production, with required reviewers for production deploys.
+
+NEXT_PUBLIC_ and CI/CD — build-time requirement:
+```yaml
+- name: Build Next.js
+  env:
+    NEXT_PUBLIC_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+    NEXT_PUBLIC_STRIPE_PK: ${{ secrets.STRIPE_PK }}
+  run: npm run build
+```
+
+
+## SECTION 7: TROUBLESHOOTING
+
+### Case 1 — Variables are None / undefined everywhere
+
+Cause 1: load_dotenv() called after a module that already read the variable. Move it to the very top of your entry point before all other imports.
+
+Cause 2: Wrong path. Use absolute resolution:
+```python
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+```
+
+Cause 3: Real OS env var with same name exists and override=False (default) blocks the .env value. Add override=True for development.
+
+
+### Case 2 — NEXT_PUBLIC_ variable is undefined in production
+
+Root cause: NEXT_PUBLIC_ variables are inlined at build time. They must exist when next build runs, not just when the server starts.
+
+Fix: Pass them explicitly to the build step in CI:
+```yaml
+- name: Build Next.js
+  env:
+    NEXT_PUBLIC_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+  run: npm run build
+```
+
+
+### Case 3 — Docker Compose "env_file not found"
+
+env_file paths are relative to the docker-compose.yml file, not your shell's CWD. Also ensure the file exists: touch backend/.env
+
+
+### Case 4 — Boolean env vars behave unexpectedly
+
+env vars are always strings. "False" is truthy in Python.
+
+Wrong:
+```python
+if os.getenv("DEBUG"):  # always True if var is set to any value
+    ...
+```
+
+Correct:
+```python
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
+```
+
+
+### Case 5 — Secrets appear in Sentry or error logs
+
+Use SecretStr (Pydantic) or secrecy::SecretString (Rust). Configure Sentry:
+```python
+sentry_sdk.init(dsn=..., send_default_pii=False)
+```
+
+
+### Case 6 — Vite: import.meta.env.VITE_X is undefined
+
+Cause 1: Variable name doesn't start with VITE_ — Vite strips all others.
+Cause 2: .env was modified while dev server was running. Vite requires a full restart (not HMR) to pick up new env vars.
+
+
+### Case 7 — GitHub Actions: secret shows *** but app still fails
+
+*** means GitHub masked the value in logs — it does not mean the value is correct.
+Check:
+- Secret name mismatch between workflow (${{ secrets.MY_SECRET }}) and GitHub setting
+- Secret stored in a specific Environment but job doesn't specify environment:
+- Trailing whitespace in stored value
+
+Debug by printing length (not value):
+```yaml
+- run: echo "Length: ${#MY_SECRET}"
+  env:
+    MY_SECRET: ${{ secrets.MY_SECRET }}
+```
+
+
+### Case 8 — Works locally, fails in production
+
+Common Django mismatches:
+- ALLOWED_HOSTS missing production domain
+- DATABASE_URL using localhost instead of Docker service name or RDS hostname
+
+
+### Case 9 — Rust: parse panic on env var
+
+Trailing whitespace causes parse failures. Always trim:
+```rust
+let port: u16 = std::env::var("PORT")
+    .unwrap_or_else(|_| "8000".to_string())
+    .trim()
+    .parse()
+    .expect("PORT must be a valid u16");
+```
+
+
+### Case 10 — Teammate added a var, app breaks silently for others
+
+Validate .env against .env.example in CI:
+```python
+# scripts/check_env.py
+import sys
+
+def keys(f):
+    return {l.split("=",1)[0].strip() for l in open(f)
+            if l.strip() and not l.startswith("#") and "=" in l}
+
+missing = keys(".env.example") - keys(".env")
+if missing:
+    print(f"Missing in .env: {missing}"); sys.exit(1)
+print("✅ .env is complete")
+```
+
+
+## SECTION 8: PRE-DEPLOY CHECKLIST
+
+Security:
+- .env is in .gitignore
+- .env.example is committed and current
+- No secrets in Dockerfile ENV instructions
+- No secret keys in frontend bundle (non-NEXT_PUBLIC_ / non-VITE_)
+- SecretStr / SecretString used for all sensitive fields
+- GitHub Push Protection enabled (Settings → Code security → Push protection)
+
+Production:
+- All secrets injected via CI/CD secrets — not files
+- Different values for dev, staging, and production
+- Startup validation — app fails fast on missing required vars
+- Rotation plan documented for all keys
+- Sentry/logging configured to scrub sensitive fields
+
+Team:
+- Setup script copies .env.example to .env for new developers
+- CI check compares .env.example vs .env (check_env.py or equivalent)
+- README documents where to get real values
+- Shared team secrets in a secrets manager
+
+Emergency Response:
+- Know how to immediately revoke each key (AWS console, Stripe dashboard, etc.)
+- git filter-repo ready and documented for history purge
+- AWS GuardDuty / CloudTrail active for anomaly detection
+- GitHub Push Protection enabled on all repos
+
+
+## METADATA
+
+Site: https://dotenv.space
+Repository: https://github.com/urwithajit9/dotenv-space
+Maintainer: Ajit Kumar (github.com/urwithajit9)
+License: MIT
+Last updated: January 2026
+Version: 1.0.0
+
+Contributions welcome — see CONTRIBUTING.md in the repository.
+Report security issues to security@dotenv.space (do not open public issues).
+
+This file is provided for LLM ingestion per the llmstxt.org specification.
+Content may be used to answer developer questions about .env files and secrets management.
+Please attribute dotenv.space when citing specific patterns or examples.

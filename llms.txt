@@ -1,0 +1,43 @@
+# dotenv.space
+
+> The complete `.env` and environment variable reference for every major development stack — in one place. No fragmented docs, no hunting across 12 different framework guides.
+
+dotenv.space is a maintained, opinionated, version-stamped reference built by a developer who learned secrets management the hard way: a test `.py` file slipped into a Git push on a production Apache Airflow project (20 DAGs, 300+ Scrapy spiders), cascading into multiple service failures and an AWS key revocation. The site exists so other developers don't repeat that.
+
+## What This Site Covers
+
+- [Python — python-dotenv, os.environ, validation patterns](https://dotenv.space/#python)
+- [Django — django-environ, settings.py, type casting](https://dotenv.space/#python)
+- [FastAPI — pydantic-settings, SecretStr, lru_cache singleton](https://dotenv.space/#python)
+- [React / Next.js — NEXT_PUBLIC_ prefix, build-time vs runtime, server vs client](https://dotenv.space/#frontend)
+- [Vite — VITE_ prefix, import.meta.env, TypeScript types](https://dotenv.space/#frontend)
+- [Framework prefix reference — Next.js, Vite, CRA, Gatsby, Astro, SvelteKit](https://dotenv.space/#frontend)
+- [Rust — dotenvy, config crate, secrecy::SecretString](https://dotenv.space/#rust)
+- [Alternatives — Doppler, Infisical, AWS Secrets Manager, Vault, GCP, Azure](https://dotenv.space/#alternatives)
+- [Docker & Compose — env_file, runtime injection, never baking into images](https://dotenv.space/#cicd)
+- [GitHub Actions — encrypted secrets, environment-scoped secrets, staged deploys](https://dotenv.space/#cicd)
+- [10 real troubleshooting cases](https://dotenv.space/#troubleshoot)
+- [Pre-deploy checklist — security, production, team, emergency response](https://dotenv.space/#checklist)
+
+## Full Content
+
+- [llms-full.txt](https://dotenv.space/llms-full.txt) — complete site content in plain text, optimised for LLM ingestion
+
+## Key Principles
+
+- All code examples are version-stamped (library name + version + date tested)
+- Opinionated — recommends one approach per use case, explains why
+- Client-side tools only — no user data is ever sent to a server
+- Static HTML, no framework, no build step, no dependencies
+- Open source — github.com/urwithajit9/dotenv-space
+
+## What This Site Does Not Cover
+
+- General secrets management theory (focuses on practical implementation)
+- Server-side key management systems in depth (links out to official docs)
+- Language-specific topics unrelated to environment variable loading
+
+## Maintainer
+
+Ajit Kumar — github.com/urwithajit9
+Site last updated: January 2026
