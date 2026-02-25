@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/install.sh"
+  to = "https://raw.githubusercontent.com/urwithajit9/dotenv-space-cli/main/scripts/install.sh"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/install"
+  to = "https://raw.githubusercontent.com/urwithajit9/dotenv-space-cli/main/scripts/install.sh"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/cli"
+  to = "https://github.com/urwithajit9/dotenv-space-cli"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/install.sh"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

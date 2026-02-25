@@ -122,8 +122,8 @@ MIT — use it, fork it, share it. If you build something with it, a link back i
 
 ## Maintainer
 
-Built and maintained by **[@urwithajit9](https://github.com/urwithajit9)**.  
-Found a critical security issue? Email: `security@dotenv.space`
+Built and maintained by **[@urwithajit9](https://github.com/urwithajit9)**.
+Found a critical security issue? Raise an <a href="../../issues">Issues</a> ·
 
 ---
 
