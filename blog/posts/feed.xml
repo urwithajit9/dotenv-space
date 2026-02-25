@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dotenv.space Blog</title>
+    <link>https://dotenv.space/blog/</link>
+    <description>Tutorials, best practices, and release notes on .env files, secret management, and the dotenv-space CLI.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 01 Feb 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://dotenv.space/blog/feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>How bots steal your API keys within minutes of a GitHub push</title>
+      <link>https://dotenv.space/blog/posts/2026-02-secret-scanning-guide.html</link>
+      <description>A technical breakdown of how automated secret scanners work, what patterns they look for, and exactly how fast they move after a GitHub push.</description>
+      <pubDate>Sat, 01 Feb 2026 00:00:00 GMT</pubDate>
+      <guid>https://dotenv.space/blog/posts/2026-02-secret-scanning-guide.html</guid>
+    </item>
+
+    <item>
+      <title>Introducing dotenv-space CLI — manage .env files from your terminal</title>
+      <link>https://dotenv.space/blog/posts/2026-01-dotenv-space-launch.html</link>
+      <description>We built a Rust CLI to scan for leaked secrets, validate .env completeness, and generate .env.example files automatically.</description>
+      <pubDate>Wed, 01 Jan 2026 00:00:00 GMT</pubDate>
+      <guid>https://dotenv.space/blog/posts/2026-01-dotenv-space-launch.html</guid>
+    </item>
+
+  </channel>
+</rss>

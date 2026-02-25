@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dotenv-space CLI — Command Reference</title>
+<meta name="description" content="Full command reference for the dotenv-space CLI — scan, check, example, list, and all flags.">
+<link rel="canonical" href="https://dotenv.space/cli/commands.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+<link rel="stylesheet" href="/assets/css/base.css">
+<style>
+.cmd-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.cmd-nav a {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all .15s;
+}
+.cmd-nav a:hover { border-color: var(--accent3); color: var(--accent3); }
+
+.cmd-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent3);
+  border-radius: var(--radius);
+  padding: 28px 28px 24px;
+  margin: 36px 0;
+  scroll-margin-top: 80px;
+}
+.cmd-block h3 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--accent3);
+  margin: 0 0 6px;
+}
+.cmd-block .cmd-desc { color: var(--text); font-size: 15px; margin-bottom: 20px; font-weight: 500; }
+.cmd-block p { font-size: 14px; }
+
+.flag-table { width: 100%; border-collapse: collapse; margin: 16px 0 0; font-size: 13.5px; }
+.flag-table th {
+  background: rgba(255,255,255,.03);
+  color: var(--dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 8px 14px;
+  text-align: left;
+  border: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+}
+.flag-table td { padding: 10px 14px; border: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+.flag-table td:first-child { font-family: 'IBM Plex Mono', monospace; color: var(--accent); font-size: 12.5px; white-space: nowrap; }
+.flag-table td:last-child { color: var(--dim); font-size: 12px; }
+</style>
+<script async src="https://plausible.io/js/pa-MTFkM-GKbC_JAqVNzkJ49.js"></script>
+<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>$</span> dotenv<span>.space</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Docs</a></li>
+    <li><a href="/cli/" class="active">CLI</a></li>
+    <li><a href="/cli/installation.html">Install</a></li>
+    <li><a href="/cli/commands.html">Commands</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="breadcrumb">
+    <a href="/">dotenv.space</a>
+    <span>/</span>
+    <a href="/cli/">cli</a>
+    <span>/</span>
+    commands
+  </div>
+  <div class="section-label">// Command Reference</div>
+  <h1>All Commands &amp; Flags</h1>
+  <p>Complete reference for every dotenv-space command. Use <code class="ic">dotenv-space --help</code> or <code class="ic">dotenv-space &lt;command&gt; --help</code> for inline help.</p>
+</div>
+
+<main>
+
+<section class="section" style="padding-top: 0; border-top: none;">
+
+  <!-- Quick nav -->
+  <div class="cmd-nav">
+    <a href="#global">Global flags</a>
+    <a href="#scan">scan</a>
+    <a href="#check">check</a>
+    <a href="#example">example</a>
+    <a href="#list">list</a>
+  </div>
+
+  <!-- Global -->
+  <div class="cmd-block" id="global">
+    <h3>dotenv-space [global flags]</h3>
+    <p class="cmd-desc">Global flags that work with every command.</p>
+
+    <table class="flag-table">
+      <thead><tr><th>Flag</th><th>Description</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>--file &lt;path&gt;<br>-f &lt;path&gt;</td>
+          <td>Path to .env file. Defaults to <code class="ic">.env</code> in the current directory.</td>
+          <td>.env</td>
+        </tr>
+        <tr>
+          <td>--version<br>-V</td>
+          <td>Print version and exit.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>--help<br>-h</td>
+          <td>Print help for the command.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>--quiet<br>-q</td>
+          <td>Suppress all output except errors. Useful in scripts.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--json</td>
+          <td>Output results as JSON (machine-readable). Useful for CI pipelines and integrations.</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- scan -->
+  <div class="cmd-block" id="scan">
+    <h3>dotenv-space scan</h3>
+    <p class="cmd-desc">Scan a .env file for values that look like real secrets.</p>
+
+    <p>Checks each value against a set of patterns matching known secret formats — AWS keys, OpenAI API keys, Stripe keys, GitHub tokens, private keys, and more. Exits non-zero if any matches are found.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Examples</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre><span class="cc"># Scan .env in current directory</span>
+dotenv-space scan
+
+<span class="cc"># Scan a specific file</span>
+dotenv-space scan --file ./backend/.env
+
+<span class="cc"># CI mode — non-zero exit if any secrets found</span>
+dotenv-space scan --ci
+
+<span class="cc"># Allow specific patterns (e.g. intentional test key)</span>
+dotenv-space scan --allow STRIPE_SECRET_KEY
+
+<span class="cc"># Output as JSON for parsing</span>
+dotenv-space scan --json</pre>
+    </div>
+
+    <table class="flag-table">
+      <thead><tr><th>Flag</th><th>Description</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>--ci</td>
+          <td>Exit code 1 if any secrets detected. Suitable for CI pipelines.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--strict</td>
+          <td>Treat warnings as errors. More aggressive scanning.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--allow &lt;KEY&gt;</td>
+          <td>Allow a specific key to match without failing. Repeatable: <code class="ic">--allow KEY1 --allow KEY2</code>.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>--json</td>
+          <td>Output results as JSON array with key, severity, and pattern matched.</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout info" style="margin-top: 20px;">
+      <span class="ci-icon">💡</span>
+      <p><strong>Exit codes:</strong> <code class="ic">0</code> = clean, <code class="ic">1</code> = secrets found (in --ci mode), <code class="ic">2</code> = file not found or parse error.</p>
+    </div>
+  </div>
+
+  <!-- check -->
+  <div class="cmd-block" id="check">
+    <h3>dotenv-space check</h3>
+    <p class="cmd-desc">Verify your .env is complete relative to .env.example.</p>
+
+    <p>Reads both <code class="ic">.env</code> and <code class="ic">.env.example</code>, then reports any keys that are in the example but missing from your local .env. Also optionally flags extra keys that aren't in the example. This is the command to run in CI to catch configuration drift.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Examples</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre><span class="cc"># Basic check</span>
+dotenv-space check
+
+<span class="cc"># Specify custom example file</span>
+dotenv-space check --example .env.example.prod
+
+<span class="cc"># Also flag keys in .env that aren't in .env.example</span>
+dotenv-space check --strict
+
+<span class="cc"># Check only .env.example structure (no .env needed)</span>
+dotenv-space check --example-only</pre>
+    </div>
+
+    <table class="flag-table">
+      <thead><tr><th>Flag</th><th>Description</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>--example &lt;path&gt;</td>
+          <td>Path to the example file. Defaults to <code class="ic">.env.example</code>.</td>
+          <td>.env.example</td>
+        </tr>
+        <tr>
+          <td>--strict</td>
+          <td>Also report keys present in .env but absent from .env.example (undocumented vars).</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--example-only</td>
+          <td>Validate .env.example structure only — useful in CI where .env isn't committed.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--json</td>
+          <td>Output missing/extra keys as JSON.</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- example -->
+  <div class="cmd-block" id="example">
+    <h3>dotenv-space example</h3>
+    <p class="cmd-desc">Generate a .env.example from your .env file.</p>
+
+    <p>Reads your <code class="ic">.env</code> and produces a <code class="ic">.env.example</code> with the same keys but values replaced by safe, descriptive placeholders. Preserves comments. Won't overwrite an existing .env.example unless you pass <code class="ic">--force</code>.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Examples</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre><span class="cc"># Generate .env.example in current directory</span>
+dotenv-space example
+
+<span class="cc"># Output to specific file</span>
+dotenv-space example --output .env.example
+
+<span class="cc"># Overwrite existing .env.example</span>
+dotenv-space example --force
+
+<span class="cc"># Preview without writing</span>
+dotenv-space example --dry-run</pre>
+    </div>
+
+    <p>Input <code class="ic">.env</code>:</p>
+    <div class="code-wrap">
+      <div class="code-bar"><span>.env (before)</span><span class="lang-tag lang-env">ENV</span></div>
+      <pre><span class="ck">SECRET_KEY</span>=<span class="cv">super-real-secret-key-abc123</span>
+<span class="ck">DATABASE_URL</span>=<span class="cv">postgresql://user:pass@localhost:5432/mydb</span>
+<span class="ck">OPENAI_API_KEY</span>=<span class="cv">sk-proj-xxxxxxxxxxx</span></pre>
+    </div>
+
+    <p>Generated <code class="ic">.env.example</code>:</p>
+    <div class="code-wrap">
+      <div class="code-bar"><span>.env.example (generated)</span><span class="lang-tag lang-env">ENV</span></div>
+      <pre><span class="ck">SECRET_KEY</span>=<span class="cv">your-secret-key-here</span>
+<span class="ck">DATABASE_URL</span>=<span class="cv">postgresql://user:password@localhost:5432/dbname</span>
+<span class="ck">OPENAI_API_KEY</span>=<span class="cv">sk-proj-your-openai-api-key</span></pre>
+    </div>
+
+    <table class="flag-table">
+      <thead><tr><th>Flag</th><th>Description</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>--output &lt;path&gt;<br>-o &lt;path&gt;</td>
+          <td>Path to write the generated file.</td>
+          <td>.env.example</td>
+        </tr>
+        <tr>
+          <td>--force</td>
+          <td>Overwrite existing .env.example without prompting.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--dry-run</td>
+          <td>Print the generated output to stdout without writing any file.</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- list -->
+  <div class="cmd-block" id="list">
+    <h3>dotenv-space list</h3>
+    <p class="cmd-desc">List all keys in a .env file without exposing values.</p>
+
+    <p>Useful for auditing what variables are defined, or for scripting. Safe to share the output — no values are printed.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Examples</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre><span class="cc"># List all keys</span>
+dotenv-space list
+
+<span class="cc"># → DATABASE_URL</span>
+<span class="cc"># → SECRET_KEY</span>
+<span class="cc"># → OPENAI_API_KEY</span>
+
+<span class="cc"># Output as newline-separated list (for shell scripting)</span>
+dotenv-space list --plain
+
+<span class="cc"># Output as JSON array</span>
+dotenv-space list --json</pre>
+    </div>
+
+    <table class="flag-table">
+      <thead><tr><th>Flag</th><th>Description</th><th>Default</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>--plain</td>
+          <td>Output one key per line with no formatting. Pipe-friendly.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--json</td>
+          <td>Output as a JSON array of key names.</td>
+          <td>false</td>
+        </tr>
+        <tr>
+          <td>--count</td>
+          <td>Print only the number of keys.</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+<!-- ═══ ENV VARS ═══ -->
+<section class="section" id="envvars">
+  <div class="section-label">// Configuration</div>
+  <h2>Environment variables</h2>
+
+  <p>The CLI can also be configured via environment variables, useful for CI where you can't pass flags directly.</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>Equivalent Flag</th><th>Example</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>DOTENV_SPACE_FILE</strong></td><td><code class="ic">--file</code></td><td><code class="ic">backend/.env</code></td></tr>
+        <tr><td><strong>DOTENV_SPACE_STRICT</strong></td><td><code class="ic">--strict</code></td><td><code class="ic">true</code></td></tr>
+        <tr><td><strong>DOTENV_SPACE_JSON</strong></td><td><code class="ic">--json</code></td><td><code class="ic">true</code></td></tr>
+        <tr><td><strong>DOTENV_SPACE_QUIET</strong></td><td><code class="ic">--quiet</code></td><td><code class="ic">true</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section" id="nav-next">
+  <div class="g2">
+    <a href="/cli/installation.html" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer; transition: border-color .2s;" onmouseover="this.style.borderColor='rgba(16,185,129,.4)'" onmouseout="this.style.borderColor=''">
+        <h4>⬅ Installation</h4>
+        <p>Install the CLI on macOS, Linux, or Windows.</p>
+      </div>
+    </a>
+    <a href="https://github.com/urwithajit9/dotenv-space-cli/issues" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div class="card" style="cursor:pointer; transition: border-color .2s;" onmouseover="this.style.borderColor='rgba(16,185,129,.4)'" onmouseout="this.style.borderColor=''">
+        <h4>🐛 Missing a command?</h4>
+        <p>Open an issue or PR on GitHub. This CLI is actively developed.</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.space</span></div>
+  <div class="footer-links">
+    <a href="/">Docs</a>
+    <a href="/cli/">CLI</a>
+    <a href="/cli/installation.html">Install</a>
+    <a href="/cli/commands.html">Commands</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <p>dotenv-space CLI · Open Source · Written in Rust</p>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

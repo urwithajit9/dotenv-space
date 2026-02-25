@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dotenv-space CLI — Validate, Scan &amp; Migrate .env Files</title>
+<meta name="description" content="The dotenv-space CLI: validate .env files, scan for secrets, convert formats, and migrate to AWS, GitHub Actions, Doppler. Built in Rust.">
+<link rel="canonical" href="https://dotenv.space/cli/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦀</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+:root{--bg:#060811;--surface:#0f1422;--surface2:#151929;--border:#1e253a;--accent:#00e5ff;--accent3:#10b981;--text:#e8edf7;--muted:#8892a4;--dim:#5a647a;--radius:10px;--purple:#a78bfa;--purple-bg:rgba(124,58,237,.15);--purple-border:rgba(124,58,237,.35)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px;overflow-x:hidden}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,8,17,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:1rem;color:var(--accent);text-decoration:none;font-weight:500;letter-spacing:-.02em}
+.nav-logo span{color:var(--muted)}
+.nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nav-links a:hover,.nav-active{color:var(--accent)!important}
+.nav-cta{background:var(--accent)!important;color:#000!important;padding:6px 15px;border-radius:6px;font-weight:700!important;font-size:12.5px!important}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--muted);border-radius:2px}
+@media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:flex}.nav-links{display:none;position:absolute;top:60px;left:0;right:0;background:rgba(6,8,17,.97);border-bottom:1px solid var(--border);flex-direction:column;padding:16px 24px 20px;gap:4px}.nav-links.open{display:flex}.nav-links a{padding:10px 0;border-bottom:1px solid var(--border)}.nav-links li:last-child a{border-bottom:none}}
+/* HERO */
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 56px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.05) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent)}
+.hero-glow{position:absolute;width:700px;height:500px;background:radial-gradient(ellipse,rgba(124,58,237,.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--purple-bg);border:1px solid var(--purple-border);color:var(--purple);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 14px;border-radius:100px;margin-bottom:32px}
+.hero-badge::before{content:'';width:7px;height:7px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;line-height:.95;letter-spacing:-.04em;margin-bottom:22px}
+.hero h1 em{font-style:normal;color:var(--purple)}
+.hero h1 .mono-sub{display:block;font-family:'IBM Plex Mono',monospace;font-size:.34em;color:var(--muted);font-weight:400;letter-spacing:.02em;margin-top:16px;line-height:1.6}
+.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--muted);max-width:560px;margin:0 auto 36px;font-weight:300;line-height:1.65}
+/* install box */
+.install-box{display:inline-flex;align-items:center;background:#060b14;border:1px solid var(--purple-border);border-radius:10px;overflow:hidden;font-family:'IBM Plex Mono',monospace;margin-bottom:28px;max-width:100%}
+.i-prefix{padding:13px 16px;background:var(--purple-bg);color:var(--purple);border-right:1px solid var(--purple-border);font-size:11px;letter-spacing:.07em;white-space:nowrap}
+.i-cmd{padding:13px 20px;color:var(--accent);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.i-copy{padding:13px 14px;background:transparent;border:none;border-left:1px solid rgba(124,58,237,.2);color:var(--dim);cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;transition:color .2s,background .2s;white-space:nowrap}
+.i-copy:hover{color:var(--accent);background:rgba(0,229,255,.06)}
+.i-copy.copied{color:var(--accent3)}
+/* action buttons */
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:0}
+.btn-p{background:var(--accent);color:#000;font-weight:700;font-size:14px;padding:12px 26px;border-radius:8px;text-decoration:none;font-family:'Syne',sans-serif;transition:opacity .2s,transform .2s}
+.btn-p:hover{opacity:.87;transform:translateY(-1px)}
+.btn-ghost{background:var(--surface2);color:var(--text);font-size:14px;padding:12px 26px;border-radius:8px;text-decoration:none;border:1px solid var(--border);font-weight:500;transition:border-color .2s,transform .2s}
+.btn-ghost:hover{border-color:var(--accent);transform:translateY(-1px)}
+.btn-purple{background:var(--purple-bg);color:var(--purple);font-weight:600;font-size:14px;padding:12px 26px;border-radius:8px;text-decoration:none;border:1px solid var(--purple-border);font-family:'IBM Plex Mono',monospace;transition:all .2s}
+.btn-purple:hover{background:rgba(124,58,237,.28);transform:translateY(-1px)}
+/* MAIN */
+main{max-width:960px;margin:0 auto;padding:0 24px}
+.section{padding:80px 0;border-top:1px solid var(--border)}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;margin-bottom:12px}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:18px}
+h3{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin:36px 0 12px;color:var(--text)}
+p{color:var(--muted);margin-bottom:16px;line-height:1.8}
+p strong{color:var(--text);font-weight:500}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+/* cmd cards */
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(278px,1fr));gap:14px;margin:30px 0}
+.cmd-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.cmd-card:hover{border-color:rgba(124,58,237,.45);transform:translateY(-2px);text-decoration:none}
+.cmd-tag{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.cmd-icon{font-size:15px}
+.cmd-card h4{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:7px}
+.cmd-card p{color:var(--muted);font-size:13.5px;margin:0;line-height:1.55}
+.cmd-badge{position:absolute;top:13px;right:13px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;padding:2px 8px;border-radius:100px;background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.cmd-badge.feat{background:var(--purple-bg);color:var(--purple);border-color:var(--purple-border)}
+/* quick steps */
+.quick-steps{display:flex;flex-direction:column;gap:0;margin:28px 0}
+.qstep{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid var(--border)}
+.qstep:last-child{border-bottom:none}
+.qnum{width:34px;height:34px;border-radius:50%;background:var(--purple-bg);border:1px solid var(--purple-border);color:var(--purple);font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px}
+.qbody h4{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:8px;color:var(--text)}
+.qbody p{font-size:14px;margin-bottom:10px}
+.qbody p:last-child{margin-bottom:0}
+/* code */
+.code-wrap{margin:18px 0}
+.code-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;padding:8px 17px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim)}
+.lang-sh{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
+.lang-yml{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25)}
+.lang-toml{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(249,115,22,.12);color:#fb923c;border:1px solid rgba(249,115,22,.25)}
+pre{background:#060b14;border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);padding:20px 22px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13.5px;line-height:1.75}
+.ic{font-family:'IBM Plex Mono',monospace;font-size:.82em;background:var(--surface2);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--accent3)}
+.ck{color:#79c0ff}.cv{color:#a5f3fc}.cc{color:#4a5568}.cs{color:#86efac}.cw{color:#f87171}.cf{color:#c4b5fd}
+/* callouts */
+.callout{border-radius:var(--radius);padding:17px 20px;margin:22px 0;display:flex;gap:13px;font-size:14px}
+.callout p{margin:0;font-size:14px}
+.ci-icon{font-size:17px;flex-shrink:0}
+.info{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15)}
+.tip{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15)}
+/* flags */
+.flags-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:22px 0}
+@media(max-width:680px){.flags-row{grid-template-columns:1fr}}
+.flag-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.flag-name{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--purple);margin-bottom:8px}
+.flag-card p{font-size:13px;margin:0 0 10px;color:var(--muted)}
+.flag-cmd{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent3);background:var(--surface2);border:1px solid var(--border);padding:4px 8px;border-radius:4px;display:block;word-break:break-all;line-height:1.5}
+/* copy btn */
+.copy-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;cursor:pointer;transition:all .18s;flex-shrink:0}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.06)}
+.copy-btn.copied{border-color:var(--accent3);color:var(--accent3)}
+/* nav cards */
+.nav-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:40px 0}
+@media(max-width:680px){.nav-cards{grid-template-columns:1fr}}
+.nav-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-decoration:none;display:block;transition:border-color .2s}
+.nav-card:hover{border-color:rgba(0,229,255,.35);text-decoration:none}
+.nc-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.1em}
+.nc-title{font-family:'Syne',sans-serif;font-weight:700;color:var(--text);margin-bottom:6px;font-size:1rem}
+.nc-desc{color:var(--muted);font-size:13px}
+/* footer */
+footer{border-top:1px solid var(--border);padding:56px 24px;text-align:center}
+.footer-logo{font-family:'IBM Plex Mono',monospace;font-size:1.1rem;color:var(--accent);margin-bottom:16px}
+.footer-logo span{color:var(--dim)}
+footer p{color:var(--dim);font-size:13.5px;margin:0}
+.footer-links{display:flex;gap:24px;justify-content:center;margin:18px 0;flex-wrap:wrap}
+.footer-links a{color:var(--dim);font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--accent);text-decoration:none}
+.footer-sep{width:1px;height:15px;background:var(--border);align-self:center;display:inline-block}
+.hr{border:none;border-top:1px solid var(--border);margin:40px 0}
+</style>
+<script async src="https://plausible.io/js/pa-MTFkM-GKbC_JAqVNzkJ49.js"></script>
+<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>$</span> dotenv<span>.space</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Reference</a></li>
+    <li><a href="/cli/" class="nav-active">CLI</a></li>
+    <li><a href="/cli/installation.html">Install</a></li>
+    <li><a href="/cli/commands.html">Commands</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="/cli/installation.html" class="nav-cta">Get CLI →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-badge">🦀 dotenv-space CLI · v0.2.2 · MIT License</div>
+  <h1>
+    Stop <em>Reading</em><br>About .env.<br>Automate It.
+    <span class="mono-sub">init · validate · scan · convert · migrate · backup</span>
+  </h1>
+  <p class="hero-sub">
+    A Rust-powered CLI that enforces the rules from the reference guide. Catch leaked secrets before bots do, validate configs before deploys break, and push to cloud managers in one command.
+  </p>
+  <div class="install-box">
+    <span class="i-prefix">curl | bash</span>
+    <span class="i-cmd" id="iCmd">curl -sSL https://dotenv.space/install.sh | bash</span>
+    <button class="i-copy" id="iCopy">copy</button>
+  </div>
+  <div class="hero-actions">
+    <a href="/cli/installation.html" class="btn-p">Installation Guide →</a>
+    <a href="/cli/commands.html" class="btn-purple">Command Reference</a>
+    <a href="https://github.com/urwithajit9/dotenv-space" class="btn-ghost" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</section>
+
+<main>
+
+<!-- COMMANDS -->
+<section class="section" id="commands">
+  <div class="section-label">// What It Does</div>
+  <h2>10 Commands. Every .env Problem Solved.</h2>
+  <p>Core commands work out of the box. Extended commands require <code class="ic">--features migrate</code> or <code class="ic">--features full</code> when building from source. The install script includes everything.</p>
+
+  <div class="cmd-grid">
+    <a href="/cli/commands.html#init" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🚀</span> init</div>
+      <h4>Initialize Project</h4>
+      <p>Interactive setup generating <code class="ic">.env.example</code> for Python, Node.js, Rust, Go, or PHP with sensible variable defaults.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#validate" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">✅</span> validate</div>
+      <h4>Validate Config</h4>
+      <p>Catches placeholders, weak secrets, boolean string traps (<code class="ic">"False"</code> is truthy!), and localhost in production.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#scan" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🔍</span> scan</div>
+      <h4>Scan for Secrets</h4>
+      <p>Detects 8+ secret types using pattern matching and entropy analysis. SARIF output for GitHub Security tab.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#diff" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">📋</span> diff</div>
+      <h4>Diff Files</h4>
+      <p>Compare <code class="ic">.env</code> vs <code class="ic">.env.example</code> instantly. Never let a teammate's new variable silently break other setups.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#convert" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🔄</span> convert</div>
+      <h4>Convert Formats</h4>
+      <p>Transform to 14+ formats: JSON, YAML, Docker, Kubernetes, Terraform, GitHub Actions, AWS, GCP, Azure, Heroku, Vercel, Railway, Doppler.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#sync" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🔃</span> sync</div>
+      <h4>Sync Files</h4>
+      <p>Bidirectional sync between <code class="ic">.env</code> and <code class="ic">.env.example</code>. Keep documentation aligned with what you actually use.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#migrate" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">☁️</span> migrate</div>
+      <h4>Migrate to Cloud</h4>
+      <p>Push secrets directly to GitHub Actions, AWS Secrets Manager, Doppler, or Infisical. Dry-run mode so nothing surprises you.</p>
+      <span class="cmd-badge feat">--features migrate</span>
+    </a>
+    <a href="/cli/commands.html#doctor" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🩺</span> doctor</div>
+      <h4>Diagnose Issues</h4>
+      <p>Health check for your project — file permissions, gitignore status, Git tracking, and project structure detection.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#template" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">📝</span> template</div>
+      <h4>Generate from Template</h4>
+      <p>Dynamic config file creation with variable substitution and filters: <code class="ic">|int</code>, <code class="ic">|bool</code>, <code class="ic">|upper</code>.</p>
+      <span class="cmd-badge">core</span>
+    </a>
+    <a href="/cli/commands.html#backup" class="cmd-card">
+      <div class="cmd-tag"><span class="cmd-icon">🔐</span> backup / restore</div>
+      <h4>Encrypted Backup</h4>
+      <p>AES-256-GCM encryption with Argon2 key derivation. Back up and restore <code class="ic">.env</code> files without storing secrets in plaintext.</p>
+      <span class="cmd-badge feat">--features full</span>
+    </a>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section class="section" id="quickstart">
+  <div class="section-label">// Get Going Fast</div>
+  <h2>Quick Start in 5 Minutes</h2>
+
+  <div class="quick-steps">
+    <div class="qstep">
+      <div class="qnum">1</div>
+      <div class="qbody">
+        <h4>Install</h4>
+        <p>One-liner for macOS and Linux. See the <a href="/cli/installation.html">installation guide</a> for Windows and from-source builds.</p>
+        <div class="code-wrap">
+          <div class="code-bar"><span>Terminal</span><span class="lang-sh">SHELL</span></div>
+          <pre>curl -sSL https://dotenv.space/install.sh | bash
+dotenv-space --version</pre>
+        </div>
+      </div>
+    </div>
+    <div class="qstep">
+      <div class="qnum">2</div>
+      <div class="qbody">
+        <h4>Initialize your project</h4>
+        <p>Generates a <code class="ic">.env.example</code> with variables for your stack and selected services.</p>
+        <div class="code-wrap">
+          <div class="code-bar"><span>Terminal</span><span class="lang-sh">SHELL</span></div>
+          <pre>dotenv-space init --stack python --services postgres,redis,stripe</pre>
+        </div>
+      </div>
+    </div>
+    <div class="qstep">
+      <div class="qnum">3</div>
+      <div class="qbody">
+        <h4>Validate your config</h4>
+        <p>Catches common issues before they reach production — placeholders, weak secrets, missing variables.</p>
+        <div class="code-wrap">
+          <div class="code-bar"><span>Terminal</span><span class="lang-sh">SHELL</span></div>
+          <pre>dotenv-space validate --strict</pre>
+        </div>
+      </div>
+    </div>
+    <div class="qstep">
+      <div class="qnum">4</div>
+      <div class="qbody">
+        <h4>Scan for leaked secrets</h4>
+        <p>Run against your entire codebase. Bots find exposed keys on GitHub within minutes — scan before you push.</p>
+        <div class="code-wrap">
+          <div class="code-bar"><span>Terminal</span><span class="lang-sh">SHELL</span></div>
+          <pre>dotenv-space scan --path src/</pre>
+        </div>
+      </div>
+    </div>
+    <div class="qstep">
+      <div class="qnum">5</div>
+      <div class="qbody">
+        <h4>Wire it into CI/CD</h4>
+        <p>Validate on every push, upload SARIF results to GitHub Security automatically. Set-and-forget protection.</p>
+        <div class="code-wrap">
+          <div class="code-bar"><span>.github/workflows/env-check.yml</span><span class="lang-yml">YAML</span></div>
+          <pre><span class="ck">name</span>: <span class="cv">Env Validation</span>
+<span class="ck">on</span>: [push, pull_request]
+<span class="ck">jobs</span>:
+  <span class="ck">validate</span>:
+    <span class="ck">runs-on</span>: <span class="cv">ubuntu-latest</span>
+    <span class="ck">steps</span>:
+      - <span class="ck">uses</span>: <span class="cv">actions/checkout@v4</span>
+      - <span class="ck">name</span>: <span class="cv">Install dotenv-space</span>
+        <span class="ck">run</span>: <span class="cv">curl -sSL https://dotenv.space/install.sh | bash</span>
+      - <span class="ck">name</span>: <span class="cv">Validate</span>
+        <span class="ck">run</span>: <span class="cv">dotenv-space validate --strict --format github-actions</span>
+      - <span class="ck">name</span>: <span class="cv">Scan</span>
+        <span class="ck">run</span>: <span class="cv">dotenv-space scan --format sarif > scan.sarif</span>
+      - <span class="ck">uses</span>: <span class="cv">github/codeql-action/upload-sarif@v2</span>
+        <span class="ck">if</span>: <span class="cv">always()</span>
+        <span class="ck">with</span>: {<span class="ck">sarif_file</span>: <span class="cv">scan.sarif</span>}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE FLAGS -->
+<section class="section" id="features">
+  <div class="section-label">// Build Options</div>
+  <h2>Feature Flags</h2>
+  <p>Cargo feature flags keep the core binary lean. The install script gives you everything. Feature flags only matter when building from source.</p>
+  <div class="flags-row">
+    <div class="flag-card">
+      <div class="flag-name">core (default)</div>
+      <p>init, validate, scan, diff, convert, sync, doctor, template</p>
+      <span class="flag-cmd">cargo install dotenv-space</span>
+    </div>
+    <div class="flag-card">
+      <div class="flag-name">--features migrate</div>
+      <p>Adds cloud migration: GitHub Actions, AWS, Doppler, Infisical</p>
+      <span class="flag-cmd">cargo install dotenv-space --features migrate</span>
+    </div>
+    <div class="flag-card">
+      <div class="flag-name">--all-features</div>
+      <p>Everything: migrate + AES-256-GCM encrypted backup &amp; restore</p>
+      <span class="flag-cmd">cargo install dotenv-space --all-features</span>
+    </div>
+  </div>
+  <div class="callout info">
+    <span class="ci-icon">💡</span>
+    <p>The <code class="ic">curl | bash</code> install downloads a pre-built binary with all features. Feature flags only matter if you <code class="ic">cargo install</code> from source.</p>
+  </div>
+</section>
+
+<!-- CONFIG -->
+<section class="section" id="config">
+  <div class="section-label">// Configuration</div>
+  <h2>Project Config File</h2>
+  <p>Store project defaults in <code class="ic">.dotenv-space.toml</code> at the root. All CLI flags can be set here to avoid repetition across your team.</p>
+  <div class="code-wrap">
+    <div class="code-bar"><span>.dotenv-space.toml</span><span class="lang-toml">TOML</span></div>
+    <pre>[defaults]
+env_file     = <span class="cs">".env"</span>
+example_file = <span class="cs">".env.example"</span>
+verbose      = <span class="cw">false</span>
+
+[validate]
+strict  = <span class="cw">true</span>
+format  = <span class="cs">"pretty"</span>   <span class="cc"># pretty | json | github-actions</span>
+
+[scan]
+exclude_patterns = [<span class="cs">"*.example"</span>, <span class="cs">"*.sample"</span>]
+format           = <span class="cs">"pretty"</span>   <span class="cc"># pretty | sarif</span>
+
+[convert]
+default_format = <span class="cs">"json"</span>
+
+[aliases]
+gh  = <span class="cs">"github-actions"</span>
+k8s = <span class="cs">"kubernetes"</span>
+tf  = <span class="cs">"terraform"</span></pre>
+  </div>
+</section>
+
+<hr class="hr">
+
+<div class="nav-cards">
+  <a href="/cli/installation.html" class="nav-card">
+    <div class="nc-label">Installation →</div>
+    <div class="nc-title">Install Guide</div>
+    <div class="nc-desc">Platform-specific steps, verification, updates, and uninstall</div>
+  </a>
+  <a href="/cli/commands.html" class="nav-card">
+    <div class="nc-label">Reference →</div>
+    <div class="nc-title">Command Reference</div>
+    <div class="nc-desc">Every flag, option, and real-world example for all 10 commands</div>
+  </a>
+  <a href="/blog/" class="nav-card">
+    <div class="nc-label">Blog →</div>
+    <div class="nc-title">Tutorials &amp; Updates</div>
+    <div class="nc-desc">Deep dives, use cases, CI/CD guides, and release notes</div>
+  </a>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.space</span></div>
+  <div class="footer-links">
+    <a href="/">Reference</a>
+    <a href="/cli/">CLI</a>
+    <a href="/cli/installation.html">Install</a>
+    <a href="/cli/commands.html">Commands</a>
+    <a href="/blog/">Blog</a>
+    <span class="footer-sep"></span>
+    <a href="https://github.com/urwithajit9/dotenv-space" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:support@dotenv.space">Support</a>
+  </div>
+  <p>dotenv.space — .env reference &amp; CLI · 2026 · Built in 🦀 Rust</p>
+  <p style="margin-top:5px;font-size:12px">No ads. No tracking. Just docs.</p>
+</footer>
+
+<script>
+document.querySelectorAll('.code-bar').forEach(bar => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy';
+  btn.addEventListener('click', () => {
+    const pre = bar.nextElementSibling; if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText || pre.textContent).then(() => {
+      btn.textContent = '✓ copied'; btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  });
+  bar.appendChild(btn);
+});
+document.getElementById('iCopy').addEventListener('click', function() {
+  navigator.clipboard.writeText(document.getElementById('iCmd').textContent).then(() => {
+    this.textContent = 'copied!'; this.classList.add('copied');
+    setTimeout(() => { this.textContent = 'copy'; this.classList.remove('copied'); }, 2000);
+  });
+});
+const t = document.getElementById('navToggle'), l = document.getElementById('navLinks');
+if (t && l) { t.addEventListener('click', () => l.classList.toggle('open')); }
+</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introducing dotenv-space CLI — dotenv.space Blog</title>
+<meta name="description" content="We built a Rust CLI to scan for leaked secrets, validate .env completeness, and generate .env.example files automatically.">
+<link rel="canonical" href="https://dotenv.space/blog/posts/2026-01-dotenv-space-launch.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+<link rel="stylesheet" href="/assets/css/base.css">
+<style>
+.post-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+}
+.post-header { margin-bottom: 52px; }
+.post-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.post-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--dim);
+}
+.post-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(16,185,129,.08);
+  border: 1px solid rgba(16,185,129,.2);
+  color: var(--accent3);
+}
+.post-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+.post-header .lead {
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Post body typography */
+.post-body h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin: 52px 0 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  color: var(--text);
+}
+.post-body h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 36px 0 12px;
+  color: var(--text);
+}
+.post-body p { color: var(--muted); line-height: 1.85; margin-bottom: 18px; }
+.post-body p strong { color: var(--text); }
+.post-body ul, .post-body ol { padding-left: 20px; margin-bottom: 18px; }
+.post-body li { color: var(--muted); line-height: 1.8; margin-bottom: 4px; }
+.post-body li strong { color: var(--text); }
+
+.post-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 48px;
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.post-footer-nav a {
+  font-size: 13.5px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+.post-footer-nav a:hover { color: var(--accent); }
+</style>
+<script async src="https://plausible.io/js/pa-MTFkM-GKbC_JAqVNzkJ49.js"></script>
+<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>$</span> dotenv<span>.space</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Docs</a></li>
+    <li><a href="/cli/">CLI</a></li>
+    <li><a href="/blog/" class="active">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a></li>
+    <li><a href="/cli/installation.html" class="nav-cta">Install CLI →</a></li>
+  </ul>
+</nav>
+
+<div class="post-container">
+
+  <div class="breadcrumb">
+    <a href="/">dotenv.space</a>
+    <span>/</span>
+    <a href="/blog/">blog</a>
+    <span>/</span>
+    2026-01
+  </div>
+
+  <header class="post-header">
+    <div class="post-meta-row">
+      <span class="post-date">January 2026</span>
+      <span class="post-tag">CLI</span>
+      <span class="post-tag" style="background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2);color:#fb923c;">Rust</span>
+    </div>
+    <h1>Introducing dotenv-space CLI</h1>
+    <p class="lead">We built a Rust CLI to do the tedious, error-prone parts of .env management automatically. Here's why, and how it works.</p>
+  </header>
+
+  <div class="post-body">
+
+    <p>dotenv.space started as a reference site — a place to look up exactly how environment variables work in Python, Next.js, Rust, Docker, and everything else. We wrote it because we kept making the same mistakes and couldn't find good, consolidated docs anywhere.</p>
+
+    <p>But documentation only helps after you've already read it. What we really wanted was a tool that catches problems before they become incidents. So we built one.</p>
+
+    <h2>The problem with .env management today</h2>
+
+    <p>Most development workflows have exactly zero tooling around .env files. You create a <code class="ic">.env</code>, hope it's in your <code class="ic">.gitignore</code>, and trust your teammates to know which variables are required. This works until it doesn't.</p>
+
+    <p>The failure modes are well-known and happen constantly:</p>
+
+    <ul>
+      <li>A secret gets committed to a public repo. Bots find it within minutes.</li>
+      <li>A new env var is added to <code class="ic">.env.example</code> but teammates don't update their local <code class="ic">.env</code>. The app fails silently in an opaque way.</li>
+      <li><code class="ic">.env.example</code> doesn't exist at all — new developers have no idea what variables to set up.</li>
+      <li><code class="ic">.env.example</code> exists but is weeks out of date.</li>
+    </ul>
+
+    <p>All of these are automatable. That's what dotenv-space CLI does.</p>
+
+    <h2>What it does</h2>
+
+    <p>The CLI ships with four commands to start:</p>
+
+    <h3>dotenv-space scan</h3>
+    <p>Scans your <code class="ic">.env</code> values against patterns matching known secret formats — AWS access keys, OpenAI API keys, Stripe secret keys, GitHub personal access tokens, private key blocks, and more. If a value looks like a real secret (not a placeholder), it warns you before you commit anything.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Terminal</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre>$ dotenv-space scan
+<span class="cw">  ✗ AWS_SECRET_ACCESS_KEY — matches AWS secret key pattern</span>
+  <span class="cc">    Value starts with: wJalrXU...</span>
+  Exit code: 1</pre>
+    </div>
+
+    <h3>dotenv-space check</h3>
+    <p>Compares <code class="ic">.env</code> against <code class="ic">.env.example</code> and reports any keys that are in the example but missing from your local file. Exits non-zero, so it's safe to run in CI on every push.</p>
+
+    <h3>dotenv-space example</h3>
+    <p>Generates a <code class="ic">.env.example</code> from your <code class="ic">.env</code> automatically. Values are replaced with safe, descriptive placeholders. No more manually maintaining an example file — just run this after adding a new variable.</p>
+
+    <h3>dotenv-space list</h3>
+    <p>Lists all keys in your <code class="ic">.env</code> without printing any values. Safe for logs, safe to share.</p>
+
+    <h2>Why Rust?</h2>
+
+    <p>We chose Rust for three reasons that matter for a security tool:</p>
+
+    <p><strong>Speed.</strong> The CLI starts in milliseconds. When you're using it as a pre-commit hook, startup time is everything. A slow hook is a hook people disable.</p>
+
+    <p><strong>Single binary, no dependencies.</strong> Copy it to a CI runner and it runs. No pip install, no npm install, no version conflicts with the project's own dependencies. This matters enormously for CI environments.</p>
+
+    <p><strong>Memory safety.</strong> Rust's ownership model eliminates buffer overflows and use-after-free by construction. For a tool that reads and processes potentially sensitive files, that's the right foundation.</p>
+
+    <h2>Getting started</h2>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>Install</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre>curl -fsSL dotenv.space/install | sh</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-bar"><span>First run</span><span class="lang-tag lang-sh">SHELL</span></div>
+      <pre><span class="cc"># In any project with a .env file:</span>
+dotenv-space scan   <span class="cc"># check for secrets</span>
+dotenv-space check  <span class="cc"># validate completeness</span></pre>
+    </div>
+
+    <p>Full installation guide for macOS, Linux, Windows, and Cargo: <a href="/cli/installation.html">dotenv.space/cli/installation</a></p>
+
+    <h2>What's next</h2>
+
+    <p>This is v0.1 — the foundation. The roadmap includes:</p>
+
+    <ul>
+      <li><strong>Sync support</strong> — push/pull variables between your local .env and a remote source (initially supporting standard environment variable conventions).</li>
+      <li><strong>More secret patterns</strong> — expanding coverage of known API key formats.</li>
+      <li><strong>Watch mode</strong> — <code class="ic">dotenv-space watch</code> for continuous validation during development.</li>
+      <li><strong>Output formats</strong> — better JSON output and GitHub Actions annotations.</li>
+    </ul>
+
+    <p>The project is open source. If you have a use case we haven't covered, or spot a false positive in the scanner — <a href="https://github.com/urwithajit9/dotenv-space-cli/issues" target="_blank" rel="noopener">open an issue</a>. We'll look at it.</p>
+
+    <div class="callout tip">
+      <span class="ci-icon">✅</span>
+      <p><strong>Try it now:</strong> <code class="ic">curl -fsSL dotenv.space/install | sh</code> — then run <code class="ic">dotenv-space scan</code> in your most active project. You might be surprised what it finds.</p>
+    </div>
+
+    <div class="post-footer-nav">
+      <a href="/blog/">← All posts</a>
+      <a href="/blog/posts/2026-02-secret-scanning-guide.html">Next: How bots steal API keys →</a>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.space</span></div>
+  <div class="footer-links">
+    <a href="/">Docs</a>
+    <a href="/cli/">CLI</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

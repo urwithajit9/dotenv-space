@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python .env Guide — Django, FastAPI, Flask | dotenv.space</title>
+<meta name="description" content="Complete guide to environment variables in Python. Django, FastAPI, Flask examples with python-dotenv, django-environ, and pydantic-settings.">
+
+<link rel="canonical" href="https://dotenv.space/frameworks/python">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+
+<!-- Modular CSS -->
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/layout.css">
+<link rel="stylesheet" href="/assets/css/pages/framework.css">
+
+<script defer data-domain="dotenv.space" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION (same on all pages) -->
+<nav class="nav">
+  <a class="nav-logo" href="/">
+    <span class="nav-logo-muted">$</span> dotenv<span class="nav-logo-muted">.space</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="/cli/">CLI Tool</a></li>
+    <li><a href="/#frameworks" class="active">Frameworks</a></li>
+    <li><a href="/#reference">Reference</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="container mt-xl">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb mb-lg">
+    <a href="/">Home</a>
+    <span>/</span>
+    <a href="/#frameworks">Frameworks</a>
+    <span>/</span>
+    <span>Python</span>
+  </nav>
+
+  <!-- Header -->
+  <header class="framework-header mb-xl">
+    <div class="framework-hero-icon">🐍</div>
+    <h1>Python Environment Variables</h1>
+    <p class="text-muted text-lg">
+      Complete guide for Django, FastAPI, Flask, and Python scripts.
+      From basics to production-ready configuration management.
+    </p>
+
+    <div class="framework-tags">
+      <span class="badge badge-accent">Django</span>
+      <span class="badge badge-accent">FastAPI</span>
+      <span class="badge badge-accent">Flask</span>
+      <span class="badge badge-accent">python-dotenv</span>
+    </div>
+  </header>
+
+  <!-- Table of Contents -->
+  <div class="toc-box mb-xl">
+    <h4>On This Page</h4>
+    <ul>
+      <li><a href="#basics">Python Basics</a></li>
+      <li><a href="#django">Django Setup</a></li>
+      <li><a href="#fastapi">FastAPI with Pydantic</a></li>
+      <li><a href="#flask">Flask Configuration</a></li>
+      <li><a href="#production">Production Checklist</a></li>
+      <li><a href="#troubleshooting">Common Issues</a></li>
+    </ul>
+  </div>
+
+  <!-- Section: Basics -->
+  <section id="basics" class="content-section">
+    <div class="section-label">Getting Started</div>
+    <h2>Python Basics with python-dotenv</h2>
+
+    <p>
+      The simplest approach for Python scripts. Install <code>python-dotenv</code>
+      and load variables before accessing them.
+    </p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <span class="code-bar-title">
+          <span class="lang-tag lang-bash">BASH</span>
+          Install python-dotenv
+        </span>
+      </div>
+      <div class="code-content">
+<pre>pip install python-dotenv</pre>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <span class="code-bar-title">
+          <span class="lang-tag lang-python">PYTHON</span>
+          config.py
+        </span>
+      </div>
+      <div class="code-content">
+<pre><span class="cw">import</span> os
+<span class="cw">from</span> dotenv <span class="cw">import</span> load_dotenv
+<span class="cw">from</span> pathlib <span class="cw">import</span> Path
+
+<span class="cc"># Load .env file</span>
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / <span class="cs">".env"</span>)
+
+<span class="cc"># Access variables</span>
+<span class="ck">DATABASE_URL</span> = os.getenv(<span class="cs">"DATABASE_URL"</span>)
+<span class="ck">SECRET_KEY</span> = os.environ[<span class="cs">"SECRET_KEY"</span>]  <span class="cc"># raises KeyError if missing</span>
+<span class="ck">DEBUG</span> = os.getenv(<span class="cs">"DEBUG"</span>, <span class="cs">"False"</span>).lower() <span class="cw">in</span> (<span class="cs">"true"</span>, <span class="cs">"1"</span>)</pre>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div class="callout-content">
+        <p>
+          <strong>Always use absolute paths</strong> when loading .env files.
+          <code>Path(__file__).resolve().parent</code> ensures the path is relative
+          to your script, not the current working directory.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Django -->
+  <section id="django" class="content-section">
+    <div class="section-label">Framework Guide</div>
+    <h2>Django with django-environ</h2>
+
+    <p>
+      Django best practice: use <code>django-environ</code> for type-safe
+      configuration with automatic parsing of database URLs, cache URLs, etc.
+    </p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <span class="code-bar-title">
+          <span class="lang-tag lang-python">PYTHON</span>
+          settings.py
+        </span>
+      </div>
+      <div class="code-content">
+<pre><span class="cw">import</span> environ
+<span class="cw">from</span> pathlib <span class="cw">import</span> Path
+
+<span class="ck">BASE_DIR</span> = Path(__file__).resolve().parent.parent
+<span class="ck">env</span> = environ.Env(
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, [<span class="cs">"localhost"</span>])
+)
+environ.Env.read_env(BASE_DIR / <span class="cs">".env"</span>)
+
+<span class="cc"># Basic settings</span>
+<span class="ck">SECRET_KEY</span> = env(<span class="cs">"SECRET_KEY"</span>)
+<span class="ck">DEBUG</span> = env(<span class="cs">"DEBUG"</span>)
+<span class="ck">ALLOWED_HOSTS</span> = env(<span class="cs">"ALLOWED_HOSTS"</span>)
+
+<span class="cc"># Database (automatic parsing)</span>
+<span class="ck">DATABASES</span> = {
+    <span class="cs">"default"</span>: env.db(<span class="cs">"DATABASE_URL"</span>)
+}
+
+<span class="cc"># Cache (automatic parsing)</span>
+<span class="ck">CACHES</span> = {
+    <span class="cs">"default"</span>: env.cache(<span class="cs">"REDIS_URL"</span>)
+}
+
+<span class="cc"># Third-party services</span>
+<span class="ck">STRIPE_SECRET_KEY</span> = env(<span class="cs">"STRIPE_SECRET_KEY"</span>)
+<span class="ck">OPENAI_API_KEY</span> = env(<span class="cs">"OPENAI_API_KEY"</span>, default=None)</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: FastAPI -->
+  <section id="fastapi" class="content-section">
+    <div class="section-label">Framework Guide</div>
+    <h2>FastAPI with Pydantic Settings</h2>
+
+    <p>
+      FastAPI's recommended approach: <code>pydantic-settings</code> provides
+      type validation, IDE autocomplete, and automatic masking of sensitive values.
+    </p>
+
+    <div class="code-wrap">
+      <div class="code-bar">
+        <span class="code-bar-title">
+          <span class="lang-tag lang-python">PYTHON</span>
+          core/config.py
+        </span>
+      </div>
+      <div class="code-content">
+<pre><span class="cw">from</span> pydantic_settings <span class="cw">import</span> BaseSettings, SettingsConfigDict
+<span class="cw">from</span> pydantic <span class="cw">import</span> AnyUrl, SecretStr
+<span class="cw">from</span> functools <span class="cw">import</span> lru_cache
+
+<span class="cw">class</span> Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=<span class="cs">".env"</span>,
+        case_sensitive=False
+    )
+
+    app_name: str = <span class="cs">"My API"</span>
+    debug: bool = False
+    database_url: AnyUrl
+    secret_key: SecretStr  <span class="cc"># Masked in logs</span>
+    redis_url: str | None = None
+
+<span class="cc"># Singleton pattern</span>
+<span class="cw">@lru_cache</span>
+<span class="cw">def</span> get_settings() -> Settings:
+    <span class="cw">return</span> Settings()
+
+<span class="cc"># Usage</span>
+<span class="cw">from</span> core.config <span class="cw">import</span> get_settings
+
+settings = get_settings()
+<span class="cf">print</span>(settings.secret_key)  <span class="cc"># **********</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- More sections would follow... -->
+
+  <!-- Quick Links -->
+  <div class="related-links mt-2xl">
+    <h3>Related Guides</h3>
+    <div class="grid-2">
+      <a href="/frameworks/docker" class="card hover-scale transition">
+        <h4>Docker Setup</h4>
+        <p>Use .env files with Docker Compose</p>
+      </a>
+      <a href="/frameworks/github-actions" class="card hover-scale transition">
+        <h4>GitHub Actions</h4>
+        <p>CI/CD with encrypted secrets</p>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER (same on all pages) -->
+<footer class="footer">
+  <div class="footer-logo">
+    <span class="nav-logo-muted">$ </span>dotenv<span class="nav-logo-muted">.space</span>
+  </div>
+
+  <div class="footer-links">
+    <div class="footer-col">
+      <h4>CLI Tool</h4>
+      <a href="/cli/">Overview</a>
+      <a href="/cli/installation">Installation</a>
+      <a href="/cli/commands">Commands</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Frameworks</h4>
+      <a href="/frameworks/python">Python</a>
+      <a href="/frameworks/javascript">JavaScript</a>
+      <a href="/frameworks/rust">Rust</a>
+      <a href="/frameworks/docker">Docker</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="/blog/">Blog</a>
+      <a href="/#reference">Reference</a>
+      <a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank">GitHub</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-text">Open source (MIT) · Built with Rust · Updated January 2026</p>
+  </div>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

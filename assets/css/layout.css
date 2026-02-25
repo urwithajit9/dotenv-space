@@ -1,0 +1,442 @@
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT.CSS - Layout systems, containers, grids, spacing
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── SECTION WRAPPER ───────────────────────────────────────── */
+.section {
+  padding: var(--space-2xl) 0;
+  position: relative;
+}
+
+.section:first-of-type {
+  padding-top: 100px;
+}
+
+.section + .section {
+  border-top: 1px solid var(--border);
+}
+
+.section-label {
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+/* ── CONTAINERS ────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.container-wide {
+  max-width: 1200px;
+}
+
+.container-narrow {
+  max-width: 720px;
+}
+
+.container-full {
+  max-width: 100%;
+  padding: 0 var(--space-xl);
+}
+
+/* ── GRID SYSTEMS ──────────────────────────────────────────── */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-auto {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-auto-sm {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.grid-auto-lg {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* ── FLEX LAYOUTS ──────────────────────────────────────────── */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-start {
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex-end {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* ── SPACING UTILITIES ─────────────────────────────────────── */
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+.mt-2xl { margin-top: var(--space-2xl); }
+
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+.mb-2xl { margin-bottom: var(--space-2xl); }
+
+.pt-xs { padding-top: var(--space-xs); }
+.pt-sm { padding-top: var(--space-sm); }
+.pt-md { padding-top: var(--space-md); }
+.pt-lg { padding-top: var(--space-lg); }
+.pt-xl { padding-top: var(--space-xl); }
+
+.pb-xs { padding-bottom: var(--space-xs); }
+.pb-sm { padding-bottom: var(--space-sm); }
+.pb-md { padding-bottom: var(--space-md); }
+.pb-lg { padding-bottom: var(--space-lg); }
+.pb-xl { padding-bottom: var(--space-xl); }
+
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.gap-lg { gap: var(--space-lg); }
+.gap-xl { gap: var(--space-xl); }
+
+/* ── SIDEBAR LAYOUTS ───────────────────────────────────────── */
+.sidebar-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── RESPONSIVE GRIDS ──────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .sidebar-layout {
+    grid-template-columns: 200px 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .container,
+  .container-wide,
+  .container-narrow {
+    padding: 0 var(--space-sm);
+  }
+
+  .section {
+    padding: var(--space-xl) 0;
+  }
+
+  .section:first-of-type {
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-auto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── ASPECT RATIO BOXES ────────────────────────────────────── */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.aspect-4-3 {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+/* ── CONTENT WIDTH LIMITERS ────────────────────────────────── */
+.prose {
+  max-width: 70ch;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin-bottom: var(--space-md);
+}
+
+.prose h2 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+.prose h3 {
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-sm);
+}
+
+/* ── SPLIT LAYOUTS ─────────────────────────────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.split-reverse {
+  grid-template-columns: 1fr 1fr;
+}
+
+.split-reverse > *:first-child {
+  order: 2;
+}
+
+.split-reverse > *:last-child {
+  order: 1;
+}
+
+@media (max-width: 768px) {
+  .split,
+  .split-reverse {
+    grid-template-columns: 1fr;
+  }
+
+  .split-reverse > *:first-child,
+  .split-reverse > *:last-child {
+    order: 0;
+  }
+}
+
+/* ── STICKY ELEMENTS ───────────────────────────────────────── */
+.sticky {
+  position: sticky;
+  top: var(--space-xl);
+}
+
+.sticky-nav {
+  position: sticky;
+  top: 80px;
+  z-index: var(--z-sticky);
+}
+
+/* ── OVERFLOW HANDLING ─────────────────────────────────────── */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── POSITION UTILITIES ────────────────────────────────────── */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+/* ── Z-INDEX UTILITIES ─────────────────────────────────────── */
+.z-0 { z-index: 0; }
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+
+/* ── VISIBILITY ────────────────────────────────────────────── */
+.visible {
+  visibility: visible;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── MOBILE NAVIGATION TOGGLE ──────────────────────────────── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.nav-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--muted);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.nav-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translateY(8px);
+}
+
+.nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translateY(-8px);
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(6,8,17,0.98);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    padding: var(--space-lg) var(--space-md);
+    gap: 0;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .nav-links li {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-links li:last-child {
+    border-bottom: none;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: var(--space-sm) 0;
+    font-size: var(--text-base);
+  }
+}
+
+/* ── PRINT STYLES ──────────────────────────────────────────── */
+@media print {
+  .nav,
+  .footer,
+  .no-print {
+    display: none;
+  }
+
+  .section {
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+}

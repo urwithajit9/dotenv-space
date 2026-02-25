@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Meta tags -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dotenv-space CLI — Manage .env Files | dotenv.space</title>
+<meta name="description" content="Command-line tool for managing .env files. Validate, scan for secrets, convert to 14+ formats. Built in Rust for speed and reliability.">
+<link rel="canonical" href="https://dotenv.space/cli/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap">
+
+<!-- CSS -->
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/components.css">
+<link rel="stylesheet" href="/assets/css/layout.css">
+<link rel="stylesheet" href="/assets/css/pages/home.css">
+
+<!-- Analytics -->
+<script defer data-domain="dotenv.space" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <a class="nav-logo" href="/">
+    <span class="nav-logo-muted">$</span> dotenv<span class="nav-logo-muted">.space</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/cli/" class="active">CLI Tool</a></li>
+    <li><a href="/#frameworks">Frameworks</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space-cli">GitHub</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="badge badge-accent mb-lg">
+    <span class="badge-pulse"></span>
+    v0.1.0 · Production Ready
+  </div>
+
+  <h1 class="hero-title">
+    <span class="hero-subtitle font-mono">dotenv-space CLI</span>
+    Manage .env Files<br>
+    <span class="text-accent">The Right Way</span>
+  </h1>
+
+  <p class="hero-description">
+    Validate configuration, scan for secrets, convert to 14+ formats.<br>
+    Built in Rust. Works everywhere. Open source.
+  </p>
+
+  <!-- INSTALL WIDGET -->
+  <div class="install-widget">
+    <div class="install-label">Quick Install</div>
+    <div class="install-command">
+      <code>curl -fsSL https://dotenv.space/install.sh | bash</code>
+      <button class="copy-btn" data-copy="curl -fsSL https://dotenv.space/install.sh | bash">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        Copy
+      </button>
+    </div>
+    <div class="install-platforms">
+      <span>✓ macOS</span>
+      <span>✓ Linux</span>
+      <span>✓ WSL2</span>
+    </div>
+  </div>
+
+  <div class="hero-actions">
+    <a href="/cli/installation" class="btn btn-primary btn-lg">Get Started →</a>
+    <a href="/cli/commands" class="btn btn-secondary btn-lg">View Commands</a>
+  </div>
+
+  <div class="hero-stats stats">
+    <div class="stat">
+      <span class="stat-value">11</span>
+      <span class="stat-label">Commands</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">14+</span>
+      <span class="stat-label">Formats</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value">&lt;10ms</span>
+      <span class="stat-label">Fast</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section container">
+  <div class="section-label">Features</div>
+  <h2>Everything You Need</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">✅</div>
+      <h3 class="feature-title">Validate</h3>
+      <p class="feature-description">
+        Catch missing variables, placeholder values, and misconfigurations before deployment.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3 class="feature-title">Scan for Secrets</h3>
+      <p class="feature-description">
+        Detect AWS keys, GitHub tokens, and 8+ secret types using pattern matching.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <h3 class="feature-title">Convert Formats</h3>
+      <p class="feature-description">
+        Export to JSON, YAML, Kubernetes, Docker, Terraform, and 14+ formats.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3 class="feature-title">Generate Templates</h3>
+      <p class="feature-description">
+        Create .env.example for Python, Node, Rust, Go with stack-specific variables.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3 class="feature-title">CI/CD Ready</h3>
+      <p class="feature-description">
+        Integrate with GitHub Actions, GitLab CI. Fail builds on security issues.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🦀</div>
+      <h3 class="feature-title">Built with Rust</h3>
+      <p class="feature-description">
+        Single binary, no dependencies. Processes 1000 variables in &lt;10ms.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section class="section container">
+  <div class="section-label">Documentation</div>
+  <h2>Quick Links</h2>
+
+  <div class="command-grid">
+    <a href="/cli/installation" class="command-card">
+      <div class="command-icon">📦</div>
+      <h4>Installation</h4>
+      <p>Install in 30 seconds on any platform</p>
+    </a>
+
+    <a href="/cli/commands" class="command-card">
+      <div class="command-icon">📖</div>
+      <h4>Commands</h4>
+      <p>Complete command reference with examples</p>
+    </a>
+
+    <a href="/cli/examples" class="command-card">
+      <div class="command-icon">💡</div>
+      <h4>Examples</h4>
+      <p>Real-world usage scenarios</p>
+    </a>
+
+    <a href="/cli/ci-cd" class="command-card">
+      <div class="command-icon">🔄</div>
+      <h4>CI/CD</h4>
+      <p>Integrate with your pipeline</p>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">
+    <span class="nav-logo-muted">$ </span>dotenv<span class="nav-logo-muted">.space</span>
+  </div>
+  <div class="footer-links">
+    <div class="footer-col">
+      <h4>CLI Tool</h4>
+      <a href="/cli/">Overview</a>
+      <a href="/cli/installation">Installation</a>
+      <a href="/cli/commands">Commands</a>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="/blog/">Blog</a>
+      <a href="https://github.com/urwithajit9/dotenv-space-cli">GitHub</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-text">Open source (MIT) · Updated January 2026</p>
+  </div>
+</footer>
+
+<!-- JavaScript -->
+<script type="module">
+  import { initCopyButtons } from '/assets/js/code-copy.js';
+  import { initNavigation } from '/assets/js/nav.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initCopyButtons();
+    initNavigation();
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Install dotenv-space CLI — macOS, Linux, Windows &amp; From Source</title>
+<meta name="description" content="Install the dotenv-space CLI tool on macOS, Linux, Windows, or build from source with Cargo. Includes verification and update instructions.">
+<link rel="canonical" href="https://dotenv.space/cli/installation.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦀</text></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+:root{--bg:#060811;--surface:#0f1422;--surface2:#151929;--border:#1e253a;--accent:#00e5ff;--accent3:#10b981;--text:#e8edf7;--muted:#8892a4;--dim:#5a647a;--radius:10px;--purple:#a78bfa;--purple-bg:rgba(124,58,237,.15);--purple-border:rgba(124,58,237,.35)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,8,17,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:1rem;color:var(--accent);text-decoration:none;font-weight:500;letter-spacing:-.02em}
+.nav-logo span{color:var(--muted)}
+.nav-links{display:flex;gap:22px;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+.nav-active{color:var(--accent)!important}
+.nav-cta{background:var(--accent)!important;color:#000!important;padding:6px 15px;border-radius:6px;font-weight:700!important;font-size:12.5px!important}
+.nav-toggle{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nav-toggle span{display:block;width:22px;height:2px;background:var(--muted);border-radius:2px}
+@media(max-width:768px){nav{padding:0 20px}.nav-toggle{display:flex}.nav-links{display:none;position:absolute;top:60px;left:0;right:0;background:rgba(6,8,17,.97);border-bottom:1px solid var(--border);flex-direction:column;padding:16px 24px 20px;gap:4px}.nav-links.open{display:flex}.nav-links a{padding:10px 0;border-bottom:1px solid var(--border)}.nav-links li:last-child a{border-bottom:none}}
+/* layout */
+.page-wrap{max-width:900px;margin:0 auto;padding:100px 24px 80px}
+.page-header{padding-bottom:48px;border-bottom:1px solid var(--border);margin-bottom:56px}
+.page-header .section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;margin-bottom:12px}
+.page-header h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.05;margin-bottom:16px}
+.page-header p{color:var(--muted);font-size:1.05rem;max-width:580px;line-height:1.7;margin:0}
+/* two-col layout for sidebar-ish ToC */
+.doc-layout{display:grid;grid-template-columns:200px 1fr;gap:48px;align-items:start}
+@media(max-width:760px){.doc-layout{grid-template-columns:1fr}}
+.doc-toc{position:sticky;top:80px}
+.doc-toc ul{list-style:none;padding:0}
+.doc-toc li{margin-bottom:2px}
+.doc-toc a{color:var(--dim);font-size:13px;text-decoration:none;padding:5px 10px;border-radius:6px;display:block;transition:color .2s,background .2s;font-family:'IBM Plex Mono',monospace}
+.doc-toc a:hover{color:var(--accent);background:rgba(0,229,255,.06)}
+.doc-toc .toc-head{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;padding:0 10px;margin:16px 0 6px}
+.doc-toc .toc-head:first-child{margin-top:0}
+@media(max-width:760px){.doc-toc{display:none}}
+/* content */
+.doc-content .section{padding:48px 0;border-top:1px solid var(--border)}
+.doc-content .section:first-child{border-top:none;padding-top:0}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--purple);text-transform:uppercase;letter-spacing:.15em;margin-bottom:10px}
+h2{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:16px}
+h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin:28px 0 10px;color:var(--text)}
+p{color:var(--muted);margin-bottom:14px;line-height:1.8}
+p strong{color:var(--text);font-weight:500}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+ul.prose{color:var(--muted);padding-left:20px;margin-bottom:14px}
+ul.prose li{margin-bottom:6px;line-height:1.7;font-size:14.5px}
+/* platform tabs */
+.platform-tabs{display:flex;gap:4px;margin-bottom:-1px;flex-wrap:wrap}
+.ptab{background:transparent;border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;padding:8px 18px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);cursor:pointer;transition:all .2s}
+.ptab.active{background:var(--surface2);color:var(--accent);border-color:rgba(0,229,255,.3)}
+.ptab:hover:not(.active){color:var(--text)}
+.pane{display:none}
+.pane.active{display:block}
+/* code */
+.code-wrap{margin:18px 0}
+.code-bar{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;padding:8px 17px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim)}
+.lang-sh{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}
+.lang-ps{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.25)}
+.lang-toml{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:rgba(249,115,22,.12);color:#fb923c;border:1px solid rgba(249,115,22,.25)}
+pre{background:#060b14;border:1px solid var(--border);border-radius:0 0 var(--radius) var(--radius);padding:20px 22px;overflow-x:auto;font-family:'IBM Plex Mono',monospace;font-size:13.5px;line-height:1.75}
+.ic{font-family:'IBM Plex Mono',monospace;font-size:.82em;background:var(--surface2);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--accent3)}
+.ck{color:#79c0ff}.cv{color:#a5f3fc}.cc{color:#4a5568}.cs{color:#86efac}.cw{color:#f87171}.cf{color:#c4b5fd}
+/* callouts */
+.callout{border-radius:var(--radius);padding:16px 20px;margin:20px 0;display:flex;gap:12px;font-size:14px}
+.callout p{margin:0;font-size:14px}
+.ci-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.info{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15)}
+.tip{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15)}
+.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}
+.danger{background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.2)}
+/* copy btn */
+.copy-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--dim);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;cursor:pointer;transition:all .18s;flex-shrink:0}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,.06)}
+.copy-btn.copied{border-color:var(--accent3);color:var(--accent3)}
+/* verify box */
+.verify-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent3);border-radius:var(--radius);padding:22px;margin:24px 0}
+.verify-box h4{font-family:'Syne',sans-serif;font-weight:700;margin-bottom:12px;font-size:.95rem;color:var(--accent3)}
+/* footer */
+footer{border-top:1px solid var(--border);padding:52px 24px;text-align:center}
+.footer-logo{font-family:'IBM Plex Mono',monospace;font-size:1.1rem;color:var(--accent);margin-bottom:14px}
+.footer-logo span{color:var(--dim)}
+footer p{color:var(--dim);font-size:13px;margin:0}
+.footer-links{display:flex;gap:22px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.footer-links a{color:var(--dim);font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--accent);text-decoration:none}
+.footer-sep{width:1px;height:14px;background:var(--border);align-self:center;display:inline-block}
+</style>
+<script async src="https://plausible.io/js/pa-MTFkM-GKbC_JAqVNzkJ49.js"></script>
+<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>$</span> dotenv<span>.space</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Reference</a></li>
+    <li><a href="/cli/">CLI</a></li>
+    <li><a href="/cli/installation.html" class="nav-active">Install</a></li>
+    <li><a href="/cli/commands.html">Commands</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="#install" class="nav-cta">Get CLI →</a></li>
+  </ul>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="section-label">// CLI Documentation</div>
+    <h1>Installation</h1>
+    <p>Install dotenv-space on macOS, Linux, or Windows, or build from source with Cargo. All install methods include the full feature set.</p>
+  </div>
+
+  <div class="doc-layout">
+    <!-- TOC -->
+    <nav class="doc-toc" aria-label="On this page">
+      <div class="toc-head">On this page</div>
+      <ul>
+        <li><a href="#install">Quick Install</a></li>
+        <li><a href="#platforms">By Platform</a></li>
+        <li><a href="#source">From Source</a></li>
+        <li><a href="#verify">Verify</a></li>
+        <li><a href="#update">Update</a></li>
+        <li><a href="#uninstall">Uninstall</a></li>
+        <li><a href="#requirements">Requirements</a></li>
+      </ul>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="doc-content">
+
+      <div class="section" id="install">
+        <div class="section-label">// Fastest</div>
+        <h2>Quick Install</h2>
+        <p>The install script auto-detects your OS and architecture, downloads the latest release binary, and places it in <code class="ic">~/.local/bin</code> (Linux/macOS) or <code class="ic">%LOCALAPPDATA%\dotenv-space\bin</code> (Windows).</p>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>macOS / Linux</span><span class="lang-sh">SHELL</span></div>
+          <pre>curl -sSL https://dotenv.space/install.sh | bash</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Windows (PowerShell)</span><span class="lang-ps">POWERSHELL</span></div>
+          <pre>irm https://dotenv.space/install.ps1 | iex</pre>
+        </div>
+
+        <div class="callout warn">
+          <span class="ci-icon">⚠️</span>
+          <p>Always review install scripts before piping to your shell. You can inspect ours at <a href="https://github.com/urwithajit9/dotenv-space/blob/main/scripts/install.sh" target="_blank" rel="noopener">github.com/urwithajit9/dotenv-space</a>.</p>
+        </div>
+      </div>
+
+      <div class="section" id="platforms">
+        <div class="section-label">// Platform Options</div>
+        <h2>By Platform</h2>
+
+        <div class="platform-tabs">
+          <button class="ptab active" onclick="showPlatform('mac', this)">macOS</button>
+          <button class="ptab" onclick="showPlatform('linux', this)">Linux</button>
+          <button class="ptab" onclick="showPlatform('windows', this)">Windows</button>
+        </div>
+
+        <div id="pane-mac" class="pane active">
+          <div class="code-wrap">
+            <div class="code-bar"><span>macOS — curl installer (recommended)</span><span class="lang-sh">SHELL</span></div>
+            <pre>curl -sSL https://dotenv.space/install.sh | bash</pre>
+          </div>
+          <div class="code-wrap">
+            <div class="code-bar"><span>macOS — Homebrew (coming soon)</span><span class="lang-sh">SHELL</span></div>
+            <pre><span class="cc"># Not yet available — use curl installer above</span>
+<span class="cc"># brew install urwithajit9/tap/dotenv-space</span></pre>
+          </div>
+          <p>Works on both Intel (x86_64) and Apple Silicon (arm64). The installer detects your architecture automatically.</p>
+        </div>
+
+        <div id="pane-linux" class="pane">
+          <div class="code-wrap">
+            <div class="code-bar"><span>Linux — curl installer</span><span class="lang-sh">SHELL</span></div>
+            <pre>curl -sSL https://dotenv.space/install.sh | bash</pre>
+          </div>
+          <div class="code-wrap">
+            <div class="code-bar"><span>Linux — manual download (x86_64)</span><span class="lang-sh">SHELL</span></div>
+            <pre><span class="cc"># Replace VERSION with the latest release tag</span>
+VERSION=v0.1.0
+curl -LO https://github.com/urwithajit9/dotenv-space/releases/download/$VERSION/dotenv-space-x86_64-unknown-linux-gnu.tar.gz
+tar -xzf dotenv-space-*.tar.gz
+chmod +x dotenv-space
+mv dotenv-space ~/.local/bin/</pre>
+          </div>
+          <p>Supports x86_64 and aarch64 (ARM64). If <code class="ic">~/.local/bin</code> isn't in your <code class="ic">PATH</code>, add <code class="ic">export PATH="$HOME/.local/bin:$PATH"</code> to your shell profile.</p>
+        </div>
+
+        <div id="pane-windows" class="pane">
+          <div class="code-wrap">
+            <div class="code-bar"><span>Windows — PowerShell</span><span class="lang-ps">POWERSHELL</span></div>
+            <pre>irm https://dotenv.space/install.ps1 | iex</pre>
+          </div>
+          <div class="code-wrap">
+            <div class="code-bar"><span>Windows — manual download</span><span class="lang-ps">POWERSHELL</span></div>
+            <pre><span class="cc"># Download from GitHub Releases</span>
+$url = "https://github.com/urwithajit9/dotenv-space/releases/latest/download/dotenv-space-x86_64-pc-windows-msvc.zip"
+Invoke-WebRequest -Uri $url -OutFile dotenv-space.zip
+Expand-Archive dotenv-space.zip -DestinationPath $env:LOCALAPPDATA\dotenv-space\bin</pre>
+          </div>
+          <div class="callout info">
+            <span class="ci-icon">ℹ️</span>
+            <p>Add the install directory to your system PATH: <strong>System Properties → Advanced → Environment Variables → PATH</strong>. You may need to restart your terminal.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" id="source">
+        <div class="section-label">// Build From Source</div>
+        <h2>From Source (Cargo)</h2>
+        <p>Requires Rust 1.75+ and Cargo. Install Rust from <a href="https://rustup.rs" target="_blank" rel="noopener">rustup.rs</a>.</p>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Core features only (smaller binary)</span><span class="lang-sh">SHELL</span></div>
+          <pre>cargo install dotenv-space</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>With cloud migration support</span><span class="lang-sh">SHELL</span></div>
+          <pre>cargo install dotenv-space --features migrate</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Everything — migrate + encrypted backup</span><span class="lang-sh">SHELL</span></div>
+          <pre>cargo install dotenv-space --all-features</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Or clone and build locally</span><span class="lang-sh">SHELL</span></div>
+          <pre>git clone https://github.com/urwithajit9/dotenv-space.git
+cd dotenv-space
+cargo build --release --all-features
+<span class="cc"># Binary at: target/release/dotenv-space</span></pre>
+        </div>
+      </div>
+
+      <div class="section" id="verify">
+        <div class="section-label">// Confirm It Works</div>
+        <h2>Verify Installation</h2>
+
+        <div class="verify-box">
+          <h4>✅ Expected output</h4>
+          <div class="code-wrap" style="margin:0">
+            <div class="code-bar"><span>Terminal</span><span class="lang-sh">SHELL</span></div>
+            <pre>$ dotenv-space --version
+dotenv-space 0.1.0
+
+$ dotenv-space --help
+A comprehensive CLI tool for managing .env files
+
+Usage: dotenv-space [OPTIONS] [COMMAND]
+
+Commands:
+  init      Interactive project setup
+  validate  Validate .env configuration
+  scan      Scan for accidentally committed secrets
+  diff      Compare .env and .env.example
+  convert   Transform to different formats
+  sync      Keep .env and .env.example in sync
+  migrate   Migrate to cloud secret managers
+  doctor    Diagnose common setup issues
+  template  Generate config files from templates
+  backup    Create encrypted backups
+  restore   Restore from encrypted backups
+  help      Print this message or the help of the given subcommand(s)</pre>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <span class="ci-icon">ℹ️</span>
+          <p>If <code class="ic">dotenv-space: command not found</code>, the install directory isn't in your PATH. Run <code class="ic">source ~/.bashrc</code> or <code class="ic">source ~/.zshrc</code>, or open a new terminal.</p>
+        </div>
+      </div>
+
+      <div class="section" id="update">
+        <div class="section-label">// Stay Current</div>
+        <h2>Update</h2>
+        <p>Re-run the install script to update to the latest release. It detects and replaces existing installations.</p>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Update — curl installer</span><span class="lang-sh">SHELL</span></div>
+          <pre>curl -sSL https://dotenv.space/install.sh | bash</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>Update — from source</span><span class="lang-sh">SHELL</span></div>
+          <pre>cargo install dotenv-space --all-features --force</pre>
+        </div>
+      </div>
+
+      <div class="section" id="uninstall">
+        <div class="section-label">// Remove</div>
+        <h2>Uninstall</h2>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>macOS / Linux</span><span class="lang-sh">SHELL</span></div>
+          <pre>rm ~/.local/bin/dotenv-space</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-bar"><span>If installed via cargo</span><span class="lang-sh">SHELL</span></div>
+          <pre>cargo uninstall dotenv-space</pre>
+        </div>
+      </div>
+
+      <div class="section" id="requirements">
+        <div class="section-label">// System Requirements</div>
+        <h2>Requirements</h2>
+
+        <ul class="prose">
+          <li><strong>macOS:</strong> 10.15 Catalina or later (x86_64 or arm64)</li>
+          <li><strong>Linux:</strong> glibc 2.17+ (most distributions from 2012+). x86_64 or aarch64.</li>
+          <li><strong>Windows:</strong> Windows 10 version 1809 or later (x86_64)</li>
+          <li><strong>Building from source:</strong> Rust 1.75.0+ (<code class="ic">rustup update</code>)</li>
+        </ul>
+
+        <div class="callout tip">
+          <span class="ci-icon">✅</span>
+          <p>No runtime dependencies. The binary is statically linked — it works without Node.js, Python, or any other runtime installed.</p>
+        </div>
+      </div>
+
+    </div><!-- /doc-content -->
+  </div><!-- /doc-layout -->
+</div><!-- /page-wrap -->
+
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.space</span></div>
+  <div class="footer-links">
+    <a href="/">Reference</a>
+    <a href="/cli/">CLI</a>
+    <a href="/cli/installation.html">Install</a>
+    <a href="/cli/commands.html">Commands</a>
+    <a href="/blog/">Blog</a>
+    <span class="footer-sep"></span>
+    <a href="https://github.com/urwithajit9/dotenv-space" target="_blank" rel="noopener">GitHub</a>
+    <a href="mailto:support@dotenv.space">Support</a>
+  </div>
+  <p>dotenv.space — 2026 · Built in 🦀 Rust · No ads. No tracking.</p>
+</footer>
+
+<script>
+function showPlatform(name, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.getElementById('pane-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+document.querySelectorAll('.code-bar').forEach(bar => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy';
+  btn.addEventListener('click', () => {
+    const pre = bar.nextElementSibling; if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText || pre.textContent).then(() => {
+      btn.textContent = '✓ copied'; btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  });
+  bar.appendChild(btn);
+});
+const t = document.getElementById('navToggle'), l = document.getElementById('navLinks');
+if (t && l) { t.addEventListener('click', () => l.classList.toggle('open')); }
+</script>
+</body>
+</html>

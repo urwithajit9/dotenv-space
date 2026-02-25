@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — dotenv.space</title>
+<meta name="description" content="Tutorials, best practices, and release notes on .env files, secret management, and the dotenv-space CLI.">
+<link rel="canonical" href="https://dotenv.space/blog/">
+<link rel="alternate" type="application/rss+xml" title="dotenv.space blog" href="/blog/feed.xml">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+<link rel="stylesheet" href="/assets/css/base.css">
+<style>
+.post-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 36px 0;
+}
+@media (max-width: 640px) { .post-grid { grid-template-columns: 1fr; } }
+
+.post-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px 24px;
+  text-decoration: none;
+  display: block;
+  transition: border-color .2s, transform .2s;
+  position: relative;
+  overflow: hidden;
+}
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.post-card:hover { border-color: rgba(0,229,255,.3); transform: translateY(-2px); text-decoration: none; }
+.post-card:hover::before { opacity: 1; }
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.post-date {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--dim);
+}
+.post-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(0,229,255,.08);
+  border: 1px solid rgba(0,229,255,.2);
+  color: var(--accent);
+}
+.post-tag.cli { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.2); color: var(--accent3); }
+.post-tag.security { background: rgba(244,63,94,.08); border-color: rgba(244,63,94,.2); color: #f87171; }
+
+.post-card h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.post-card p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.post-card-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 640px) { .post-card-featured { grid-template-columns: 1fr; } }
+.post-card-featured h2 { font-size: 1.4rem; }
+
+.featured-badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  background: rgba(245,158,11,.1);
+  border: 1px solid rgba(245,158,11,.25);
+  color: var(--warn);
+  padding: 3px 10px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.rss-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--dim);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 6px;
+  transition: all .2s;
+}
+.rss-link:hover { color: var(--warn); border-color: rgba(245,158,11,.3); text-decoration: none; }
+</style>
+<script async src="https://plausible.io/js/pa-MTFkM-GKbC_JAqVNzkJ49.js"></script>
+<script>window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()</script>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>$</span> dotenv<span>.space</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="/">Docs</a></li>
+    <li><a href="/cli/">CLI</a></li>
+    <li><a href="/blog/" class="active">Blog</a></li>
+    <li><a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a></li>
+    <li><a href="/cli/installation.html" class="nav-cta">Install CLI →</a></li>
+  </ul>
+</nav>
+
+<div class="page-hero">
+  <div class="section-label">// Blog</div>
+  <h1>Tutorials, best practices<br>&amp; release notes</h1>
+  <p>Deep dives on .env files, secret management, the dotenv-space CLI, and keeping your dev workflow secure.</p>
+  <a href="/blog/feed.xml" class="rss-link">📡 RSS Feed</a>
+</div>
+
+<main>
+
+<section class="section" style="padding-top: 0; border-top: none;">
+  <div class="post-grid">
+
+    <!-- Featured post -->
+    <a class="post-card post-card-featured" href="/blog/posts/2026-01-dotenv-space-launch.html">
+      <div>
+        <div class="post-meta">
+          <span class="post-date">Jan 2026</span>
+          <span class="post-tag cli">CLI</span>
+          <span class="featured-badge">✦ Latest</span>
+        </div>
+        <h2>Introducing dotenv-space CLI — manage .env files from your terminal</h2>
+        <p>We built a Rust CLI to do the tedious, error-prone parts of .env management automatically: scan for leaked secrets, validate completeness, and generate .env.example files in one command.</p>
+      </div>
+    </a>
+
+    <!-- Post 2 -->
+    <a class="post-card" href="/blog/posts/2026-02-secret-scanning-guide.html">
+      <div class="post-meta">
+        <span class="post-date">Feb 2026</span>
+        <span class="post-tag security">Security</span>
+      </div>
+      <h2>How bots steal your API keys within minutes of a GitHub push</h2>
+      <p>A technical breakdown of how automated secret scanners work, what patterns they look for, and exactly how fast they move — with real data.</p>
+    </a>
+
+    <!-- Placeholder posts (to be written) -->
+    <a class="post-card" href="#" style="opacity:.5; pointer-events:none; cursor:default;">
+      <div class="post-meta">
+        <span class="post-date">Coming soon</span>
+        <span class="post-tag">Guide</span>
+      </div>
+      <h2>The definitive guide to pre-commit hooks for secret prevention</h2>
+      <p>Set up git-secrets, dotenv-space, and truffleHog in 10 minutes. Never commit a secret again.</p>
+    </a>
+
+    <a class="post-card" href="#" style="opacity:.5; pointer-events:none; cursor:default;">
+      <div class="post-meta">
+        <span class="post-date">Coming soon</span>
+        <span class="post-tag cli">CLI</span>
+      </div>
+      <h2>Using dotenv-space in GitHub Actions to protect your team</h2>
+      <p>A step-by-step CI workflow that validates .env.example completeness and scans for leaked secrets on every PR.</p>
+    </a>
+
+  </div>
+
+  <div class="callout info">
+    <span class="ci-icon">📝</span>
+    <p>Want to write for dotenv.space? We're looking for guest posts on secret management, developer security practices, and real incident stories. <a href="https://github.com/urwithajit9/dotenv-space-cli/discussions" target="_blank" rel="noopener">Start a discussion on GitHub →</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-logo"><span>$ </span>dotenv<span>.space</span></div>
+  <div class="footer-links">
+    <a href="/">Docs</a>
+    <a href="/cli/">CLI</a>
+    <a href="/blog/">Blog</a>
+    <a href="https://github.com/urwithajit9/dotenv-space-cli" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <p>dotenv.space · The complete environment variable reference</p>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

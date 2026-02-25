@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════════════════
+   CLI.CSS - CLI Documentation Styles
+   Sidebar layout, command reference, code examples
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── SIDEBAR LAYOUT ────────────────────────────────────────── */
+.cli-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 3rem;
+  align-items: start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.cli-sidebar {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding: var(--space-md) 0;
+}
+
+.cli-content {
+  min-width: 0;
+  padding: var(--space-md) 0;
+}
+
+/* ── SIDEBAR NAVIGATION ────────────────────────────────────── */
+.sidebar-nav h4 {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+  margin: var(--space-lg) 0 var(--space-sm);
+}
+
+.sidebar-nav h4:first-child {
+  margin-top: 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin: 0;
+}
+
+.sidebar-nav a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+}
+
+.sidebar-nav a:hover {
+  color: var(--text);
+  background: rgba(0,229,255,0.05);
+}
+
+.sidebar-nav a.active {
+  color: var(--accent);
+  background: rgba(0,229,255,0.08);
+  font-weight: 500;
+}
+
+/* ── DOC HEADER ────────────────────────────────────────────── */
+.doc-header {
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+.doc-header h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: var(--space-sm);
+}
+
+.doc-header .lead {
+  font-size: var(--text-lg);
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 70ch;
+}
+
+.doc-meta {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--dim);
+}
+
+/* ── DOC SECTIONS ──────────────────────────────────────────── */
+.doc-section {
+  margin: var(--space-2xl) 0;
+  scroll-margin-top: 100px;
+}
+
+.doc-section h2 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-md);
+  padding-top: var(--space-md);
+}
+
+.doc-section h3 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-sm);
+}
+
+.doc-section h4 {
+  font-size: var(--text-lg);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-sm);
+}
+
+/* ── COMMAND REFERENCE ─────────────────────────────────────── */
+.command-list {
+  display: grid;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.command-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  transition: border-color var(--transition-base);
+}
+
+.command-item:hover {
+  border-color: var(--accent);
+}
+
+.command-signature {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--accent);
+  margin-bottom: var(--space-sm);
+  display: block;
+}
+
+.command-description {
+  color: var(--muted);
+  margin-bottom: var(--space-md);
+  line-height: 1.7;
+}
+
+.command-options {
+  margin-top: var(--space-md);
+}
+
+.command-options h5 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  margin-bottom: var(--space-sm);
+}
+
+.option-list {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.option-item {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--space-md);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.option-item:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.option-name {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text);
+}
+
+.option-desc {
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+/* ── EXAMPLE BLOCKS ────────────────────────────────────────── */
+.example-block {
+  margin: var(--space-lg) 0;
+}
+
+.example-title {
+  font-weight: 600;
+  font-size: var(--text-base);
+  color: var(--text);
+  margin-bottom: var(--space-sm);
+}
+
+/* ── TABLE OF CONTENTS ─────────────────────────────────────── */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  margin: var(--space-xl) 0;
+}
+
+.toc h4 {
+  font-size: var(--text-base);
+  margin-bottom: var(--space-sm);
+}
+
+.toc ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc li {
+  margin-bottom: 0.5rem;
+}
+
+.toc a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: color var(--transition-base);
+}
+
+.toc a:hover {
+  color: var(--accent);
+}
+
+/* ── NAVIGATION ARROWS ─────────────────────────────────────── */
+.doc-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+  gap: var(--space-md);
+}
+
+.doc-nav-item {
+  flex: 1;
+  max-width: 50%;
+}
+
+.doc-nav-item.next {
+  text-align: right;
+}
+
+.doc-nav-link {
+  display: block;
+  padding: var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.doc-nav-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.doc-nav-label {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  margin-bottom: 0.25rem;
+}
+
+.doc-nav-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+/* ── INSTALL WIDGET (IN DOCS) ──────────────────────────────── */
+.doc-install-widget {
+  background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin: var(--space-xl) 0;
+  text-align: center;
+}
+
+.doc-install-widget h3 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-sm);
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .cli-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .cli-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cli-sidebar {
+    position: static;
+    max-height: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  .option-item {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .doc-nav {
+    flex-direction: column;
+  }
+
+  .doc-nav-item {
+    max-width: 100%;
+  }
+
+  .doc-nav-item.next {
+    text-align: left;
+  }
+}
