@@ -709,7 +709,7 @@ footer p {
     <span></span><span></span><span></span>
   </button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#start">Start Here</a></li>
+    <li><a href="#cli">CLI</a></li>
     <li><a href="#python">Python</a></li>
     <li><a href="#frontend">Frontend</a></li>
     <li><a href="#rust">Rust</a></li>
@@ -757,6 +757,8 @@ footer p {
 
 <!-- ── MAIN ── -->
 <main>
+
+
 
 <!-- ═══ THE STORY ═══ -->
 <section class="section" id="start">
@@ -810,6 +812,33 @@ footer p {
     <span class="ci-icon">🚨</span>
     <p><strong>Already committed secrets?</strong> Simply deleting the file is not enough — Git history still contains them. Use <code class="ic">git filter-repo</code> or BFG Repo Cleaner to purge history AND immediately rotate every exposed key. Assume they're compromised the moment they touched a remote.</p>
   </div>
+</section>
+
+
+  <section class="section" id="cli" style="background: rgba(0,229,255,.02); border-bottom: 1px solid var(--border);">
+  <main>
+    <div class="section-label">// Productivity Tool</div>
+    <h2>dotenv-space CLI</h2>
+    <p>A lightweight utility to sync, validate, and bridge <code class="ic">.env</code> files across your local development environments and CI/CD pipelines.</p>
+
+    <div class="g2">
+      <div class="card">
+        <h4>⚡️ One-Step Install</h4>
+        <div class="code-wrap" style="margin: 0;">
+          <div class="code-bar"><span>Terminal</span><span class="lang-tag lang-sh">BASH</span></div>
+          <pre style="padding: 15px 20px;">curl -fsSL https://dotenv.space/install.sh | bash</pre>
+        </div>
+      </div>
+      <div class="card">
+        <h4>📦 Key Features</h4>
+        <ul style="list-style: none; color: var(--muted); font-size: 13.5px;">
+          <li style="margin-bottom: 5px;">• <strong>Sync:</strong> Bridge local envs with cloud providers.</li>
+          <li style="margin-bottom: 5px;">• <strong>Audit:</strong> Scan for leaked secrets before commits.</li>
+          <li style="margin-bottom: 0;">• <strong>Format:</strong> Auto-clean and sort messy env files.</li>
+        </ul>
+      </div>
+    </div>
+  </main>
 </section>
 
 <!-- ═══ PYTHON ═══ -->
