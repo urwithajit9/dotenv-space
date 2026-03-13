@@ -18,6 +18,13 @@
   to = "https://github.com/urwithajit9/dotenv-space-cli"
   status = 301
   force = true
+  
+# Umami analytics proxy (ad-blocker bypass)
+[[redirects]]
+  from = "/stats/*"
+  to = "https://analytics.dotenv.space/:splat"
+  status = 200
+  force = true
 
 [[headers]]
   for = "/install.sh"
